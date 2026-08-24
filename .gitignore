@@ -10,14 +10,11 @@ next-env.d.ts
 # Not published. See "Files this repo does not carry" in README.md.
 # ---------------------------------------------------------------------------
 
-# Licensed typefaces. Chantal (Device Fonts / Rian Hughes) and Avenir LT Pro
-# (Monotype) are both "Preview & Print" embedding only. Committing the binaries
-# to a public repo would redistribute them. See FONTS.md.
-!public/fonts/README.md
-public/fonts/*.woff2
-public/fonts/*.woff
-public/fonts/*.ttf
-public/fonts/*.otf
+# NOTE: the brand webfonts ARE committed. This repository is PRIVATE, which is
+# what makes that acceptable — the binaries are not published to anyone outside
+# it. Chantal (Device Fonts / Rian Hughes) and Avenir LT Pro (Monotype) are both
+# "Preview & Print" embedding only, so if this repo is ever made public again the
+# two .woff2 files under public/fonts/ must come back out first. See FONTS.md.
 
 # Client source material: unreleased brand guidelines, packaging artwork and the
 # raw 3D masters. The derived assets the site actually serves — logo, labels,

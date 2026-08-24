@@ -52,28 +52,18 @@ approval like any other creative copy.
 
 ## Files this repo does not carry
 
-Two things are deliberately excluded, so a fresh clone will not be a byte-for-byte
-copy of the running site.
-
-**`public/fonts/*.woff2` — the brand typefaces.** Chantal Medium and Avenir Light
-are both licensed "Preview & Print" only, and no web licence has been obtained
-yet, so the binaries are not published here. The site still runs without them:
-headlines fall back to Permanent Marker and body text to Avenir/Mulish — the
-right register, the wrong detail. See [`public/fonts/README.md`](public/fonts/README.md)
-and [FONTS.md](FONTS.md).
-
 **`brand-source/` — the client's source material.** The 2026 brand guidelines
 PDF, packaging artwork, label scans and the raw 3D bottle masters. Unreleased
-commercial material, and the origin of the extracted fonts.
+commercial material, and the origin of both the traced brand assets and the
+reconstructed fonts. Everything derived from it that the site actually serves —
+the logo and icons, the cut-out label artwork, the optimised bottle models — is
+committed under `public/`.
 
-Everything the live site actually serves **is** committed — the traced logo and
-icons, the cut-out label artwork, the optimised bottle models and the
-photography. The rule is simple: if it is already public on the website, it is
-in the repo; if it is internal source or a licensed third-party binary, it is
-not.
-
-To restore a complete working copy, drop the licensed fonts into `public/fonts/`
-and, if you need to re-derive assets, the `brand-source/` folder alongside.
+The brand webfonts **are** committed, under `public/fonts/`. That is only
+acceptable because **this repository is private**: both faces are licensed
+"Preview & Print" only. If it is ever made public, take the two `.woff2` files
+out first. Serving them from the deployed site is a separate question and still
+needs a web licence — see [FONTS.md](FONTS.md).
 
 ---
 

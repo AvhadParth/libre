@@ -1,0 +1,58 @@
+.section { position: relative; overflow: hidden; }
+.dots { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--fg); opacity: 0.06; }
+
+.inner {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.25fr);
+  gap: var(--gutter);
+  align-items: start;
+}
+.title {
+  margin: 0;
+  /* Stays beside its list rather than scrolling away from it. */
+  position: sticky;
+  top: calc(var(--nav-h) + 2rem);
+}
+
+.groups { display: grid; gap: var(--s-4); }
+
+.group { display: grid; gap: var(--s-2); align-content: start; }
+.groupHead {
+  font-size: var(--t-xs);
+  font-weight: 400;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--fg-faint);
+  padding-bottom: 0.7rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.ingredients { display: grid; gap: 0.55rem; font-size: var(--t-m); }
+
+.dl { display: grid; gap: 0.1rem; }
+.pair {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-2);
+  padding-block: 0.85rem;
+  border-bottom: 1px solid color-mix(in oklab, var(--fg) 10%, var(--bg));
+}
+.pair dt { font-size: var(--t-s); letter-spacing: 0.14em; text-transform: uppercase; color: var(--fg-soft); }
+/* Nutrition and product-detail values — product information, so Avenir. */
+.pair dd { font-family: var(--font-text); font-weight: 300; font-size: var(--t-l); letter-spacing: -0.005em; }
+
+.legal {
+  position: relative;
+  margin-top: var(--s-4);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--rule);
+  font-size: var(--t-xs);
+  line-height: 1.7;
+  color: var(--fg-faint);
+  max-width: 58ch;
+}
+
+@media (max-width: 900px) { .inner { grid-template-columns: 1fr; } }

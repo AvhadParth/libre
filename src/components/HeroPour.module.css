@@ -1,0 +1,190 @@
+.boot { height: 100svh; background: var(--cream); }
+
+/* The whole opening act is one scroll track. */
+.track {
+  position: relative;
+  height: 520svh;
+  background: var(--cream);
+}
+
+.stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.dots {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%; height: 100%;
+  color: var(--rouge);
+  opacity: 0.09;
+}
+
+/* ---------------------------------------------------------- behind the 3D --- */
+.backType {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  padding-top: var(--nav-h);
+  text-align: center;
+  pointer-events: none;
+}
+
+.wordmark {
+  color: var(--rouge);
+  /* The bottle stands in front of the name — the name is the room it is in. */
+  margin: 0;
+  display: block;
+  width: 100%;
+}
+
+/* The wordmark is artwork, so it is sized by width against the viewport rather
+   than by font-size. Capped so it never outgrows the bottle standing in it. */
+.wordmarkArt {
+  --clear-space: 0;
+  display: block;
+  margin-inline: auto;
+  width: clamp(18rem, 68vw, 78rem);
+}
+.wordmarkArt svg { height: auto; width: 100%; }
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+/* ------------------------------------------------------------ in front of --- */
+.front {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+.front > * { pointer-events: auto; }
+
+/* Kept off the centre line so the bottle never covers it. */
+.welcome {
+  position: absolute;
+  top: calc(var(--nav-h) + clamp(1rem, 4vh, 2.5rem));
+  left: var(--gutter);
+  color: var(--rouge);
+}
+
+.introCopy {
+  position: absolute;
+  left: var(--gutter);
+  right: var(--gutter);
+  bottom: clamp(2rem, 5vh, 4rem);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--s-3);
+  flex-wrap: wrap;
+}
+
+.tagline {
+  max-width: 18ch;
+  color: var(--rouge);
+  font-size: var(--t-l);
+}
+.tagline :global(.marked) > svg { color: var(--sol); }
+
+.scrollCue {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85em;
+  font-size: var(--t-xs);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--rouge);
+  padding: 0.6em 0;
+}
+.cueArrow {
+  display: inline-block;
+  animation: cue 2.4s var(--e-inout) infinite;
+}
+@keyframes cue {
+  0%, 100% { transform: translateY(0); opacity: 0.55; }
+  50% { transform: translateY(0.55em); opacity: 1; }
+}
+.scrollCue:hover .cueArrow { animation-duration: 1.1s; }
+
+/* The two beats. Deliberately off-grid, deliberately not centred. */
+.beat {
+  position: absolute;
+  margin: 0;
+  color: var(--rouge);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+.beatPop  { top: clamp(5rem, 16vh, 11rem); left: var(--gutter); }
+.beatPour { bottom: clamp(3rem, 10vh, 7rem); right: var(--gutter); text-align: right; }
+
+/* -------------------------------------------------------------- the pour --- */
+.wipe {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  padding: var(--gutter);
+  background: var(--rouge);
+  color: var(--cream);
+  transform: translateY(104%);
+  will-change: transform;
+}
+
+.wipeWord {
+  margin: 0;
+  text-align: center;
+  color: var(--cream);
+  opacity: 0;
+}
+
+/* -------------------------------------------- reduced motion / no WebGL --- */
+.static {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: calc(var(--nav-h) + var(--s-5)) var(--gutter) var(--s-6);
+  background: var(--cream);
+  color: var(--rouge);
+}
+.staticInner {
+  display: grid;
+  justify-items: center;
+  gap: var(--s-3);
+  text-align: center;
+  max-width: 46rem;
+}
+.staticArt { width: min(20rem, 60vw); margin-block: var(--s-3); }
+.staticSteps {
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: 0.4em 1.2em;
+  margin-bottom: var(--s-2);
+}
+
+@media (max-width: 900px) {
+  .track { height: 460svh; }
+  /* Portrait: the bottle is large and central, so the name sits high where
+     only the neck crosses it instead of being swallowed by the body. */
+  .backType { align-items: start; padding-top: calc(var(--nav-h) + 9svh); }
+  /* Kept off the centre line so the bottle never covers it. */
+.welcome {
+  position: absolute;
+  top: calc(var(--nav-h) + clamp(1rem, 4vh, 2.5rem));
+  left: var(--gutter);
+  color: var(--rouge);
+}
+
+.introCopy { flex-direction: column; align-items: flex-start; }
+  .beatPop { top: calc(var(--nav-h) + 2rem); }
+  .beatPour { bottom: 8rem; }
+}

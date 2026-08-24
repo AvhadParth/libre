@@ -1,0 +1,52 @@
+.section { display: grid; gap: var(--s-5); padding-bottom: var(--s-5); }
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--s-3);
+}
+.title { margin: 0; max-width: 12ch; }
+.title :global(.marked) > svg { color: var(--accent); }
+
+.body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+  gap: var(--gutter);
+  align-items: start;
+}
+
+.copy { display: grid; gap: var(--s-2); align-content: start; padding-top: var(--s-2); }
+
+/* Two images, off-grid on purpose — the small one crashes into the large one. */
+.art { position: relative; }
+.artSmall {
+  position: absolute;
+  right: -8%;
+  bottom: -14%;
+  width: 44%;
+  box-shadow: 0 20px 60px color-mix(in oklab, var(--rouge) 18%, transparent);
+}
+
+.pillars {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--gutter);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--rule);
+}
+
+.pillar { display: grid; gap: 0.6rem; align-content: start; }
+.pillarNo {
+  font-size: var(--t-xs);
+  letter-spacing: 0.24em;
+  color: var(--fg-faint);
+}
+
+@media (max-width: 900px) {
+  .body { grid-template-columns: 1fr; }
+  .art { max-width: 26rem; }
+  .artSmall { right: -6%; width: 40%; }
+  .pillars { grid-template-columns: 1fr; gap: var(--s-3); }
+}

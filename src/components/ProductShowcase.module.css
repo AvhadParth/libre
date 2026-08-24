@@ -1,0 +1,32 @@
+.section { display: grid; gap: var(--s-4); }
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--s-3);
+}
+.title { margin: 0; max-width: 16ch; }
+.title :global(.marked) > svg { color: var(--accent); }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--gutter);
+  align-items: start;
+}
+/* The middle card sits low — the row reads as a composition, not a rack. */
+.grid > *:nth-child(2) { transform: translateY(clamp(1rem, 4vw, 3.5rem)); }
+
+.foot { display: flex; justify-content: center; padding-top: var(--s-3); }
+
+@media (max-width: 1000px) {
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid > *:nth-child(2) { transform: none; }
+  .grid > *:nth-child(3) { transform: translateY(clamp(1rem, 4vw, 3rem)); }
+}
+@media (max-width: 680px) {
+  .grid { grid-template-columns: 1fr; }
+  .grid > * { transform: none !important; }
+}

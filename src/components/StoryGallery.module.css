@@ -1,0 +1,63 @@
+.section {
+  position: relative;
+  background: var(--bg);
+  color: var(--fg);
+  padding-block: var(--section);
+  overflow: hidden;
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--s-3);
+  margin-bottom: var(--s-4);
+}
+.title { margin: 0; max-width: 14ch; }
+.title :global(.marked) > svg { color: var(--accent); }
+
+/* Driven by vertical scroll — no native overflow, GSAP owns the x. */
+.viewport { overflow: visible; }
+.viewport .row { display: flex; gap: var(--gutter); padding-left: var(--gutter); will-change: transform; }
+
+/* Everywhere else: a proper swipeable, snapping scroller. */
+.scroller {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  padding-bottom: var(--s-2);
+}
+.scroller .row {
+  display: flex;
+  gap: var(--s-3);
+  padding-inline: var(--gutter);
+  width: max-content;
+}
+.scroller .cell { scroll-snap-align: center; }
+
+.cell { flex: 0 0 auto; width: clamp(15rem, 26vw, 24rem); }
+.cell[data-i='1'] { width: clamp(17rem, 30vw, 28rem); }
+.cell[data-i='3'] { width: clamp(13rem, 21vw, 20rem); }
+
+.story {
+  display: grid;
+  gap: var(--s-2);
+  transition: transform 640ms var(--e-out);
+}
+.story:hover, .story:focus-visible { transform: translateY(-8px); }
+.story:focus-visible { outline: 3px solid var(--fg); outline-offset: 8px; }
+
+.meta {
+  display: grid;
+  gap: 0.4rem;
+  opacity: 0.55;
+  transform: translateY(6px);
+  transition: opacity 520ms var(--e-out), transform 620ms var(--e-out);
+}
+.story:hover .meta, .story:focus-visible .meta { opacity: 1; transform: translateY(0); }
+
+/* Captions are Avenir, per the guidelines. */
+.caption { font-family: var(--font-text); font-weight: 400; font-size: var(--t-l); letter-spacing: -0.005em; }
+.place { font-size: var(--t-xs); letter-spacing: 0.18em; text-transform: uppercase; color: var(--fg-faint); }

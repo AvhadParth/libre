@@ -1,0 +1,15 @@
+.page { padding: calc(var(--nav-h) + var(--s-5)) var(--gutter) var(--s-6); }
+.inner { display: grid; gap: var(--s-3); justify-items: start; max-width: 68rem; }
+.title { margin: 0; }
+
+.sections { display: grid; gap: var(--s-3); width: 100%; margin-block: var(--s-2); }
+.section { padding-bottom: var(--s-2); border-bottom: 1px solid var(--rule); }
+.sectionTitle {
+  display: flex; align-items: baseline; gap: var(--s-2);
+  font-family: var(--font-display);
+  font-size: var(--d-s);
+  letter-spacing: -0.015em;
+  margin-bottom: 0.5rem;
+}
+.sectionNo { font-family: var(--font-text); font-size: var(--t-xs); letter-spacing: 0.2em; color: var(--fg-faint); }
+.placeholder { font-size: var(--t-s); color: var(--fg-faint); font-style: italic; }

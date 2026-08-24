@@ -1,0 +1,60 @@
+.section { padding-block: var(--section); background: var(--bg); color: var(--fg); }
+
+.head { margin-bottom: var(--s-4); }
+.title { margin: 0; }
+.title :global(.marked) > svg { color: var(--accent); }
+
+.columns {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: var(--gutter);
+  align-items: start;
+}
+
+.column { display: grid; gap: var(--s-3); align-content: start; }
+
+.columnHead {
+  display: grid;
+  gap: 0.35rem;
+  font-size: var(--t-xs);
+  font-weight: 400;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid var(--rule);
+}
+.columnNote {
+  letter-spacing: 0.06em;
+  text-transform: none;
+  font-style: italic;
+  color: var(--fg-faint);
+}
+
+.foodList { display: grid; gap: var(--s-2); }
+.food {
+  display: grid;
+  grid-template-columns: 2.4rem 1fr;
+  gap: var(--s-2);
+  align-items: start;
+  padding-bottom: var(--s-2);
+  border-bottom: 1px solid color-mix(in oklab, var(--fg) 12%, var(--bg));
+}
+.foodNo { font-size: var(--t-xs); letter-spacing: 0.2em; color: var(--fg-faint); padding-top: 0.35em; }
+/* Pairings are product information — Avenir, per the guidelines. */
+.foodLabel { font-family: var(--font-text); font-weight: 300; font-size: var(--t-xl); letter-spacing: -0.005em; }
+
+.disclaimer { font-size: var(--t-xs); color: var(--fg-faint); font-style: italic; }
+
+.moments { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-2); }
+.moment { display: grid; gap: var(--s-2); }
+.moment[data-i='1'] { transform: translateY(clamp(0.8rem, 3vw, 2.4rem)); }
+.momentLabel { margin: 0; }
+
+@media (max-width: 900px) {
+  .columns { grid-template-columns: 1fr; }
+  .moments { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .moment[data-i='1'] { transform: none; }
+}
+@media (max-width: 560px) {
+  .moments { grid-template-columns: 1fr; }
+}

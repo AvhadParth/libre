@@ -1,0 +1,145 @@
+.boot { height: 100svh; background: var(--cream); }
+
+/* The whole opening act is one scroll track: three bottles, three grounds. */
+.track {
+  position: relative;
+  height: 480svh;
+  background: var(--bg);
+  color: var(--fg);
+  /* The ground morphs as the row advances; match the body's own crossfade. */
+  transition: background-color 900ms var(--e-inout), color 900ms var(--e-inout);
+}
+
+.stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.bubbles { z-index: 0; }
+
+/* ------------------------------------------------------------- wordmark --- */
+.backType {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  /* Lifted clear of the copy in the lower-left. */
+  padding-block: calc(var(--nav-h) + 2svh) 26svh;
+  pointer-events: none;
+}
+
+.wordmark {
+  margin: 0;
+  display: block;
+  width: 100%;
+  color: var(--fg);
+}
+
+/* The wordmark is artwork, so it is sized by width against the viewport rather
+   than by font-size. Capped so it never outgrows the row standing in it. */
+.wordmarkArt {
+  --clear-space: 0;
+  display: block;
+  margin-inline: auto;
+  width: clamp(17rem, 58vw, 64rem);
+  opacity: 0.9;
+}
+.wordmarkArt svg { height: auto; width: 100%; }
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+/* ---------------------------------------------------------------- cards --- */
+.cards {
+  position: absolute;
+  z-index: 3;
+  left: var(--gutter);
+  bottom: clamp(3rem, 11vh, 7.5rem);
+  width: min(24rem, 42vw);
+  display: grid;
+  /* All three occupy the same cell and crossfade in place. */
+  grid-template-areas: 'card';
+}
+
+.card {
+  grid-area: card;
+  display: grid;
+  gap: 0.55rem;
+  justify-items: start;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.cardName { margin: 0; line-height: 0.9; }
+.cardVariant {
+  font-size: var(--t-s);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+}
+.cardCta { margin-top: var(--s-2); }
+
+/* ------------------------------------------------------------------ cue --- */
+.cue {
+  position: absolute;
+  z-index: 3;
+  right: var(--gutter);
+  bottom: clamp(3rem, 11vh, 7.5rem);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7em;
+  font-size: var(--t-xs);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+}
+.cueArrow { width: 16px; transform: rotate(90deg); }
+
+/* ------------------------------------------- reduced motion / no WebGL --- */
+.static {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding-block: calc(var(--nav-h) + var(--s-5)) var(--s-6);
+  background: var(--bg);
+  color: var(--fg);
+  overflow: hidden;
+}
+.staticInner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: var(--s-3);
+}
+.staticArt { width: min(14rem, 44vw); height: auto; }
+.staticList {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s-3);
+  font-size: var(--t-s);
+}
+
+/* --------------------------------------------------------------- narrow --- */
+@media (max-width: 900px) {
+  .track { height: 420svh; }
+  .cards {
+    left: var(--gutter);
+    right: var(--gutter);
+    width: auto;
+    bottom: clamp(4.5rem, 14vh, 8rem);
+  }
+  .cue { display: none; }
+  .wordmarkArt { width: min(84vw, 34rem); }
+  .backType { align-items: start; padding-top: calc(var(--nav-h) + 7svh); }
+}

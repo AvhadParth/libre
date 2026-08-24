@@ -1,0 +1,9 @@
+.hero {
+  min-height: 74svh;
+  display: grid;
+  align-items: end;
+  padding: calc(var(--nav-h) + var(--s-5)) var(--gutter) var(--s-5);
+}
+.heroInner { display: grid; gap: var(--s-3); justify-items: start; }
+.title { margin: 0; }
+.title :global(.marked) > svg { color: var(--accent); }

@@ -1,0 +1,76 @@
+.section { padding-block: var(--section); background: var(--bg); color: var(--fg); }
+
+.inner {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: var(--gutter);
+  align-items: start;
+}
+
+.title {
+  margin: 0;
+  /* Stays beside its list rather than scrolling away from it. */
+  position: sticky;
+  top: calc(var(--nav-h) + 2rem);
+}
+
+.axes { display: grid; gap: var(--s-3); }
+
+.axis {
+  display: grid;
+  gap: 0.7rem;
+  padding-bottom: var(--s-2);
+  border-bottom: 1px solid var(--rule);
+  transition: transform 520ms var(--e-out);
+}
+.axis:hover { transform: translateX(0.35rem); }
+
+.axisHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-2);
+}
+
+/* Axis labels are captions on a data display — Avenir, per the guidelines. */
+.axisLabel {
+  font-family: var(--font-text);
+  font-weight: 400;
+  font-size: var(--t-m);
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.axisValue {
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--t-s);
+  letter-spacing: 0.1em;
+  color: var(--fg-soft);
+}
+
+.meter { display: flex; gap: clamp(0.3rem, 1vw, 0.6rem); }
+
+.slot {
+  display: block;
+  flex: 0 1 clamp(1.1rem, 2.4vw, 1.9rem);
+  aspect-ratio: 4 / 5;
+  color: var(--fg);
+  opacity: 0.16;
+  transition: opacity 420ms var(--e-out), transform 520ms var(--e-elastic);
+}
+.slot svg { width: 100%; height: 100%; }
+.slot[data-on] { opacity: 1; color: var(--accent); }
+.axis:hover .slot[data-on] { transform: translateY(-3px) rotate(-6deg); }
+
+.note {
+  margin-top: var(--s-3);
+  font-size: var(--t-xs);
+  letter-spacing: 0.1em;
+  color: var(--fg-faint);
+}
+
+@media (max-width: 900px) {
+  .inner { grid-template-columns: 1fr; }
+}

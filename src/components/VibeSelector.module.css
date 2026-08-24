@@ -1,0 +1,95 @@
+.section {
+  position: relative;
+  overflow: hidden;
+  padding-block: var(--section);
+  background: var(--bg);
+  color: var(--fg);
+  /* The ground itself is part of the answer. */
+  transition: background-color 780ms var(--e-inout), color 780ms var(--e-inout);
+}
+
+.dots {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  color: var(--fg);
+  opacity: 0.09;
+  transition: opacity 780ms var(--e-out);
+  animation: float 26s linear infinite;
+}
+.section[data-tempo='fast'] .dots { opacity: 0.16; animation-duration: 9s; }
+.section[data-tempo='slow'] .dots { opacity: 0.06; animation-duration: 46s; }
+
+@keyframes float {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-40px, -40px, 0); }
+}
+
+.inner { display: grid; gap: var(--s-4); position: relative; z-index: 1; }
+
+.head { display: grid; gap: var(--s-2); }
+.title { margin: 0; max-width: 14ch; }
+.title :global(.marked) > svg { color: var(--accent); }
+
+/* ------------------------------------------------------------- the chips --- */
+.picker { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+
+.chip {
+  padding: 0.85em 1.5em;
+  font-size: var(--t-s);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-soft);
+  transition: background 420ms var(--e-out), color 420ms var(--e-out),
+              border-color 420ms var(--e-out), transform 560ms var(--e-elastic);
+}
+.chip:hover, .chip:focus-visible { transform: translateY(-3px) scale(1.03); border-color: var(--fg); }
+.chip[data-active='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--rouge);
+  transform: rotate(-1.5deg) scale(1.04);
+}
+
+/* ------------------------------------------------------------ the answer --- */
+.result {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--gutter);
+  align-items: center;
+  animation: settle 720ms var(--e-out) both;
+}
+@keyframes settle {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.mood { display: grid; gap: var(--s-3); justify-items: start; }
+.moodLine { margin: 0; max-width: 14ch; }
+.motif { display: block; width: clamp(3.5rem, 8vw, 6.5rem); color: var(--accent); }
+.motif svg { width: 100%; height: auto; overflow: visible; }
+
+.suggestion {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--s-3);
+  align-items: center;
+  padding: var(--s-3);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+}
+.suggestionArt { height: clamp(5rem, 13vh, 8.5rem); }
+.suggestionArt svg { height: 100%; width: auto; }
+.suggestionBody { display: grid; gap: 0.6rem; justify-items: start; }
+.suggestionName { margin: 0; }
+
+@media (max-width: 900px) {
+  .result { grid-template-columns: 1fr; }
+  .suggestion { grid-template-columns: 1fr; justify-items: start; }
+  .suggestionArt { height: 5rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dots { animation: none; }
+  .result { animation: none; }
+}

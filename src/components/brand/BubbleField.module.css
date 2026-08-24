@@ -1,0 +1,33 @@
+.field {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  /* The whole field is a wash, not a foreground element — the bottles and the
+     wordmark have to stay the loudest things in the frame. */
+  opacity: 0.5;
+}
+
+/* Multiply is what makes the overlaps mix new tones out of the palette rather
+   than stack opaque discs, exactly as the guidelines draw it. */
+.blend {
+  mix-blend-mode: multiply;
+}
+
+/* On a dark ground multiply would crush the circles to nothing, so the field
+   switches to screen and lightens instead. Same device, inverted. */
+:global([data-theme='rouge']) .blend,
+:global([data-theme='vine']) .blend,
+:global([data-theme='azul']) .blend {
+  mix-blend-mode: screen;
+}
+:global([data-theme='rouge']) .field,
+:global([data-theme='vine']) .field,
+:global([data-theme='azul']) .field {
+  opacity: 0.28;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .field { opacity: 0.32; }
+}

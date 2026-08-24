@@ -1,0 +1,133 @@
+.card {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: var(--s-2);
+  padding: var(--s-3);
+  background: var(--bg);
+  color: var(--fg);
+  border-radius: var(--radius);
+  overflow: hidden;
+  isolation: isolate;
+  transition: transform 720ms var(--e-out);
+  /* Lets the product name size itself against the card, not the viewport. */
+  container-type: inline-size;
+}
+.card:hover, .card:focus-within { transform: translateY(-6px); }
+
+/* One link covers the card so the whole thing is a target, but the visible
+   focus ring lands on the card rather than an invisible box. */
+.hit { position: absolute; inset: 0; z-index: 3; }
+.hit:focus-visible { outline: 3px solid var(--fg); outline-offset: -6px; }
+
+/* ---------------------------------------------------------------- stage --- */
+/* A full-strength colour block, not a tint. Mixing an accent halfway into the
+   ground just averages the two into mud — the bottle is die-cut out of it. */
+.stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--accent);
+  transition: background 620ms var(--e-out);
+}
+.card:hover .stage, .card:focus-within .stage { background: var(--accent-2); }
+
+.bottle {
+  position: relative;
+  z-index: 2;
+  height: 78%;
+  will-change: transform;
+}
+.bottle svg { height: 100%; width: auto; }
+
+/* The scribble draws itself around the product on approach */
+.scribble {
+  position: absolute;
+  z-index: 1;
+  width: 74%;
+  height: 46%;
+  color: var(--bg);
+  opacity: 0.8;
+  overflow: visible;
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 900ms var(--e-out) 60ms;
+}
+.card:hover .scribble, .card:focus-within .scribble { clip-path: inset(0 0 0 0); }
+
+/* A grape rolls in from the corner. Different corner per card. */
+.grape {
+  position: absolute;
+  z-index: 2;
+  width: 13%;
+  color: var(--bg);
+  opacity: 0;
+  transition: opacity 420ms var(--e-out), transform 780ms var(--e-elastic);
+}
+.card[data-index='0'] .grape { top: 12%; right: 14%; transform: translate(30px, -30px) rotate(-40deg); }
+.card[data-index='1'] .grape { bottom: 14%; left: 12%; transform: translate(-30px, 30px) rotate(40deg); }
+.card[data-index='2'] .grape { top: 16%; left: 14%; transform: translate(-30px, -24px) rotate(25deg); }
+.card:hover .grape, .card:focus-within .grape {
+  opacity: 1;
+  transform: translate(0, 0) rotate(0deg);
+}
+
+/* ----------------------------------------------------------------- body --- */
+.body { display: grid; gap: 0.7rem; align-content: start; }
+
+.personality {
+  font-size: var(--t-xs);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+}
+
+.name {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
+  transition: transform 620ms var(--e-out);
+  /*
+   * Real product names ("Sauvignon Blanc", "Sparkling Rosé") are far longer
+   * than the "LIBRE 01" placeholders this card was built around, and the
+   * display face is wide. Cap the type against the card's own width so a long
+   * name steps down instead of running out the side, and let it break rather
+   * than force a single unbreakable line.
+   */
+  font-size: min(var(--d-m), 13cqi);
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+.card:hover .name, .card:focus-within .name { transform: translateX(0.12em); }
+
+.variant { font-size: var(--t-l); color: var(--fg-soft); }
+.variantPending { font-family: var(--font-text); }
+
+.foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-2);
+  margin-top: var(--s-1);
+}
+
+.price {
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--t-m);
+  letter-spacing: 0.04em;
+}
+
+/* Label swap: both states occupy the same box so nothing shifts. */
+.cta { position: relative; overflow: hidden; }
+.ctaRest, .ctaHover { display: block; transition: transform 520ms var(--e-out), opacity 320ms var(--e-out); }
+.ctaHover { position: absolute; left: 1.9em; top: 50%; transform: translateY(50%); opacity: 0; }
+.card:hover .ctaRest, .card:focus-within .ctaRest { transform: translateY(-140%); opacity: 0; }
+.card:hover .ctaHover, .card:focus-within .ctaHover { transform: translateY(-50%); opacity: 1; }
+.card:hover .cta, .card:focus-within .cta { color: var(--rouge); }
+.card:hover .cta::before, .card:focus-within .cta::before { transform: translateY(0); }

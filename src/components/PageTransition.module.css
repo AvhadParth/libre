@@ -1,0 +1,18 @@
+.cover {
+  position: fixed;
+  inset: 0;
+  z-index: 180;
+  display: grid;
+  place-items: center;
+  background: var(--rouge);
+  transform: translateY(102%);
+  visibility: hidden;
+  pointer-events: none;
+  will-change: transform, border-radius;
+}
+
+.mark {
+  width: clamp(2.6rem, 6vw, 4.4rem);
+  color: var(--sol);
+  opacity: 0;
+}

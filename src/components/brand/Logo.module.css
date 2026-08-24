@@ -1,0 +1,21 @@
+.logo {
+  /* Clear space, per the guidelines, is measured off the proportions of the
+     round letterform — half its height on every side. Never encroached. */
+  --clear-space: 0.4em;
+  display: inline-block;
+  padding: var(--clear-space);
+  margin: calc(var(--clear-space) * -1);
+  color: inherit;
+  line-height: 0;
+}
+
+.mark {
+  display: block;
+  height: var(--logo-h, 1.5rem);
+  width: auto;
+  color: currentColor;
+}
+
+/* The grape is tall and narrow, so it needs its own height to sit optically
+   level with the wordmark rather than towering over it. */
+.logo[data-variant='mark'] .mark { height: var(--logo-h, 1.8rem); }

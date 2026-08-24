@@ -1,0 +1,25 @@
+node_modules
+.next
+out
+.DS_Store
+*.tsbuildinfo
+next-env.d.ts
+.env*.local
+
+# ---------------------------------------------------------------------------
+# Not published. See "Files this repo does not carry" in README.md.
+# ---------------------------------------------------------------------------
+
+# Licensed typefaces. Chantal (Device Fonts / Rian Hughes) and Avenir LT Pro
+# (Monotype) are both "Preview & Print" embedding only. Committing the binaries
+# to a public repo would redistribute them. See FONTS.md.
+!public/fonts/README.md
+public/fonts/*.woff2
+public/fonts/*.woff
+public/fonts/*.ttf
+public/fonts/*.otf
+
+# Client source material: unreleased brand guidelines, packaging artwork and the
+# raw 3D masters. The derived assets the site actually serves — logo, labels,
+# optimised bottle models — are committed under public/.
+brand-source/

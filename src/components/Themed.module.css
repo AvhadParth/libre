@@ -1,0 +1,7 @@
+.themed {
+  position: relative;
+  background-color: var(--bg);
+  color: var(--fg);
+  isolation: isolate;
+}
+.padded { padding-block: var(--section); }

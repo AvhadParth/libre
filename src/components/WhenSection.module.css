@@ -1,0 +1,54 @@
+.track { position: relative; height: 420svh; background: var(--bg); color: var(--fg); }
+
+.stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  padding: var(--nav-h) var(--gutter) var(--s-4);
+}
+
+.dots { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--fg); opacity: 0.1; }
+
+.ask, .why { grid-area: 1 / 1; margin: 0; text-align: center; z-index: 1; }
+.why { opacity: 0; color: var(--accent); z-index: 3; }
+
+.moments {
+  grid-area: 1 / 1;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.moment {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  opacity: 0;
+  white-space: nowrap;
+  will-change: transform, opacity;
+}
+.momentGrape { width: 0.6em; color: var(--accent); }
+
+/* Scattered by hand, not by algorithm — each one lands where it belongs. */
+.moment[data-i='0'] { top: 14%;  left: 6%;  rotate: -6deg; }
+.moment[data-i='1'] { top: 26%;  right: 8%; rotate: 5deg; }
+.moment[data-i='2'] { top: 47%;  left: 3%;  rotate: 3deg; }
+.moment[data-i='3'] { bottom: 27%; right: 5%; rotate: -4deg; }
+.moment[data-i='4'] { bottom: 12%; left: 12%; rotate: 7deg; }
+.moment[data-i='5'] { bottom: 38%; right: 26%; rotate: -9deg; }
+
+@media (max-width: 900px) {
+  .track { height: 380svh; }
+  .moment[data-i='0'] { top: 16%; left: 4%; }
+  .moment[data-i='1'] { top: 27%; right: 4%; }
+  .moment[data-i='2'] { top: 42%; left: 2%; }
+  .moment[data-i='3'] { bottom: 30%; right: 3%; }
+  .moment[data-i='4'] { bottom: 14%; left: 6%; }
+  .moment[data-i='5'] { bottom: 44%; right: 12%; }
+}

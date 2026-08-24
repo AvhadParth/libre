@@ -1,0 +1,40 @@
+.hero {
+  position: relative;
+  overflow: hidden;
+  min-height: 88svh;
+  display: grid;
+  align-items: end;
+  padding: calc(var(--nav-h) + var(--s-5)) var(--gutter) var(--s-5);
+}
+.heroDots { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--fg); opacity: 0.1; }
+.heroInner { position: relative; display: grid; gap: var(--s-3); justify-items: start; }
+.title { margin: 0; }
+.title :global(.marked) > svg { color: var(--accent); }
+
+.wall { display: grid; gap: var(--s-4); }
+.wallHead {
+  display: flex; flex-wrap: wrap;
+  align-items: flex-end; justify-content: space-between; gap: var(--s-2);
+}
+.wallHead h2 { margin: 0; }
+
+.wallGrid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--gutter);
+  align-items: start;
+}
+/* Hand-placed spans — a curated wall, not an auto-flow gallery. */
+.wallItem[data-i='0'] { grid-column: span 4; }
+.wallItem[data-i='1'] { grid-column: span 3; margin-top: clamp(1rem, 4vw, 3.5rem); }
+.wallItem[data-i='2'] { grid-column: span 5; }
+.wallItem[data-i='3'] { grid-column: span 5; margin-top: clamp(0.5rem, 2vw, 2rem); }
+.wallItem[data-i='4'] { grid-column: span 3; }
+.wallItem[data-i='5'] { grid-column: span 4; margin-top: clamp(1rem, 3vw, 2.5rem); }
+
+
+@media (max-width: 900px) {
+  .wallGrid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .wallItem[data-i='0'], .wallItem[data-i='2'], .wallItem[data-i='3'] { grid-column: span 6; }
+  .wallItem[data-i='1'], .wallItem[data-i='4'], .wallItem[data-i='5'] { grid-column: span 3; }
+}

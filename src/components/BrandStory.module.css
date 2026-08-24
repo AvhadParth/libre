@@ -1,0 +1,75 @@
+.track {
+  position: relative;
+  height: 560svh;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+.stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  padding: calc(var(--nav-h) + var(--s-3)) var(--gutter) var(--s-5);
+}
+
+/* ------------------------------------------------------------ the words --- */
+.words { position: relative; display: grid; place-items: center; z-index: 2; }
+
+.negative, .positive {
+  grid-area: 1 / 1;
+  margin: 0;
+  text-align: center;
+}
+.negative { display: grid; justify-items: center; }
+
+.not { position: relative; display: inline-block; }
+
+.strike path { stroke-width: 0.05em; }
+.strike {
+  position: absolute;
+  left: -8%;
+  top: 46%;
+  width: 116%;
+  height: 0.42em;
+  color: var(--accent);
+  overflow: visible;
+  clip-path: inset(0 100% 0 0);
+}
+
+/* The accusation rolls inside a fixed window — one line visible at a time. */
+.rollWindow { height: 0.86em; overflow: hidden; font-size: var(--d-xl); }
+.roll { will-change: transform; }
+.roll li { height: 0.86em; line-height: 0.86; }
+
+.positive { opacity: 0; color: var(--accent); }
+
+.closing {
+  position: absolute;
+  left: var(--gutter);
+  bottom: clamp(2rem, 6vh, 4.5rem);
+  z-index: 2;
+  opacity: 0;
+  max-width: 34ch;
+  color: var(--fg-soft);
+}
+
+/* ------------------------------------------------------ the photography --- */
+.photo {
+  position: absolute;
+  z-index: 1;
+  width: clamp(9rem, 17vw, 17rem);
+  opacity: 0.9;
+}
+.photoA { top: 12%; left: 6%; }
+.photoB { bottom: 14%; right: 7%; }
+
+@media (max-width: 900px) {
+  .track { height: 460svh; }
+  .photo { width: clamp(7rem, 30vw, 10rem); opacity: 0.7; }
+  .photoA { top: 9%; left: -2%; }
+  .photoB { bottom: 20%; right: -3%; }
+  .closing { right: var(--gutter); }
+}

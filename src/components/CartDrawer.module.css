@@ -1,0 +1,109 @@
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  background: color-mix(in oklab, var(--rouge) 55%, transparent);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 520ms var(--e-out), visibility 0s linear 520ms;
+}
+.scrim[data-open='true'] {
+  opacity: 1; visibility: visible;
+  transition: opacity 520ms var(--e-out), visibility 0s;
+}
+
+.drawer {
+  position: fixed;
+  top: 0; right: 0; bottom: 0;
+  z-index: 160;
+  width: min(30rem, 100vw);
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--fg);
+  transform: translateX(102%);
+  transition: transform 720ms var(--e-inout);
+  box-shadow: -2px 0 60px color-mix(in oklab, var(--rouge) 22%, transparent);
+}
+.drawer[data-open='true'] { transform: translateX(0); }
+
+.head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--s-2);
+  padding: var(--s-3) var(--s-3) var(--s-2);
+  border-bottom: 1px solid var(--rule);
+}
+.title { margin: 0; }
+.close { font-size: 1.1rem; padding: 0.4rem; line-height: 1; }
+
+.empty {
+  display: grid; justify-items: start; align-content: center; gap: var(--s-2);
+  flex: 1; padding: var(--s-3);
+}
+.emptyGrape { width: 3.4rem; color: var(--accent); }
+
+.lines { flex: 1; overflow-y: auto; padding: var(--s-2) var(--s-3); display: grid; gap: var(--s-3); }
+
+.line {
+  display: grid;
+  grid-template-columns: 4.2rem 1fr auto;
+  gap: var(--s-2);
+  align-items: start;
+  padding-bottom: var(--s-3);
+  border-bottom: 1px solid var(--rule);
+}
+
+.swatch {
+  display: grid; place-items: center;
+  aspect-ratio: 3 / 4;
+  background: var(--bg);
+  color: var(--accent);
+  border-radius: var(--radius);
+}
+.swatchGrape { width: 45%; }
+
+.lineBody { display: grid; gap: 0.35rem; }
+.lineName { font-family: var(--font-display); font-size: var(--t-l); letter-spacing: -0.01em; }
+.lineMeta { font-size: var(--t-xs); color: var(--fg-faint); letter-spacing: 0.08em; }
+
+.qty {
+  display: inline-flex; align-items: center; gap: 0.2rem;
+  margin-top: 0.35rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  width: fit-content;
+}
+.qty button { width: 2rem; height: 2rem; line-height: 1; font-size: 0.95rem; }
+.qty button:hover { color: var(--accent); }
+.qty span { min-width: 1.5rem; text-align: center; font-size: var(--t-s); }
+
+.linePrice {
+  display: grid; justify-items: end; gap: 0.5rem;
+  font-size: var(--t-s);
+  text-align: right;
+}
+.remove {
+  font-size: var(--t-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-faint);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.remove:hover { color: var(--fg); }
+
+.foot {
+  display: grid; gap: var(--s-2);
+  padding: var(--s-3);
+  border-top: 1px solid var(--rule);
+}
+.subtotal {
+  display: flex; align-items: baseline; justify-content: space-between;
+  font-size: var(--t-s);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+/* A price is product information — Avenir, per the guidelines. */
+.subtotal strong { font-family: var(--font-text); font-weight: 400; font-size: var(--t-xl); letter-spacing: -0.005em; }
+.note { font-size: var(--t-xs); color: var(--fg-faint); }
+.keep { justify-self: center; color: var(--fg-soft); }

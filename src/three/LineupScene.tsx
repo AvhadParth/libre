@@ -20,7 +20,7 @@ export const hasWebGL = () => {
 };
 
 /** The line-up, in the order the hero walks through it. */
-export const LINEUP: readonly BottleId[] = ['merlot', 'sauvignon', 'sparkling'];
+export const LINEUP: readonly BottleId[] = ['merlot', 'sauvignon', 'rose', 'sparkling'];
 
 /*
  * One bottle on screen at a time.

@@ -19,6 +19,7 @@ import { useGLTF } from '@react-three/drei';
 export const BOTTLES = {
   merlot: '/models/bottle-merlot.glb',
   sauvignon: '/models/bottle-sauvignon.glb',
+  rose: '/models/bottle-sparkling-rose.glb',
   sparkling: '/models/bottle-sparkling-white.glb',
 } as const;
 

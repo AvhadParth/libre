@@ -1,9 +1,18 @@
 .boot { height: 100svh; background: var(--cream); }
 
-/* The whole opening act is one scroll track: three bottles, three grounds. */
+/*
+ * The whole opening act is one scroll track: one bottle per stop, one ground
+ * each.
+ *
+ * The track length is NOT arbitrary. Each bottle's dwell works out at
+ * ((1 - END_HOLD) / (bottles - 1)) x (height - 100svh), so adding a bottle
+ * shortens every step unless this grows with it. Four bottles at 660svh gives
+ * ~142svh each, matching the three-bottle feel that was tuned at 480svh.
+ * Add a fifth and this wants roughly 840svh.
+ */
 .track {
   position: relative;
-  height: 480svh;
+  height: 660svh;
   background: var(--bg);
   color: var(--fg);
   /* The ground morphs as the row advances; match the body's own crossfade. */
@@ -132,7 +141,7 @@
 
 /* --------------------------------------------------------------- narrow --- */
 @media (max-width: 900px) {
-  .track { height: 420svh; }
+  .track { height: 580svh; }
   .cards {
     left: var(--gutter);
     right: var(--gutter);

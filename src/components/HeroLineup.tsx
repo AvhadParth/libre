@@ -20,14 +20,16 @@ import styles from './HeroLineup.module.css';
  * The supplied bottle models are single fused meshes — no separable cork, no
  * liquid volume — so this hero does not try to open or pour anything. It works
  * them as objects instead: the row slides, each bottle turns, and the ground
- * takes that bottle's colour. One scroll, three products, and the colour system
- * doing the talking.
+ * takes that bottle's colour. One scroll per product, and the colour system
+ * doing the talking. Each ground is the theme the catalogue already assigns
+ * that wine, so the hero cannot drift out of step with the product pages.
  */
 
 /** Each model, paired with the product it actually is. */
 const SLOTS: { id: BottleId; slug: string; theme: ThemeName }[] = [
   { id: 'merlot', slug: 'merlot-red', theme: 'rouge' },
   { id: 'sauvignon', slug: 'sauvignon-blanc-white', theme: 'vine' },
+  { id: 'rose', slug: 'sparkling-rose', theme: 'mist' },
   { id: 'sparkling', slug: 'sparkling-white', theme: 'sol' },
 ];
 

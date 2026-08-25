@@ -15,8 +15,8 @@
   height: 660svh;
   background: var(--bg);
   color: var(--fg);
-  /* The ground morphs as the row advances; match the body's own crossfade. */
-  transition: background-color 900ms var(--e-inout), color 900ms var(--e-inout);
+  /* No transition. The ground colour is written per frame as a function of
+     scroll position, so a transition here would only ever lag behind it. */
 }
 
 .stage {

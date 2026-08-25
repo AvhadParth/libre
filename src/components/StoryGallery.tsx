@@ -3,20 +3,22 @@
 import { useEffect, useRef, useState } from 'react';
 import { gsap, ScrollTrigger } from '@/lib/gsap';
 import { stories } from '@/lib/stories';
-import { SHOW_SAMPLE_VALUES } from '@/lib/content-config';
 import { prefersReducedMotion } from '@/lib/motion';
-import { Frame } from './Frame';
-import { Pending, SampleTag } from './Pending';
 import { Scribble } from './brand/Marks';
 import styles from './StoryGallery.module.css';
 
 /**
- * The scrapbook, travelling sideways.
+ * The brand's world, travelling sideways.
  *
- * On a precise pointer with motion allowed, the row is driven by vertical
+ * A film strip rather than a carousel: the panels run edge to edge at full
+ * height with no cards, no gaps and no frames, so the reader travels THROUGH
+ * the photography instead of past a row of thumbnails. Captions sit on the
+ * image rather than beneath it, which is what keeps the images at full height.
+ *
+ * On a precise pointer with motion allowed the strip is driven by vertical
  * scroll — horizontal movement earns its place here because the content is a
- * timeline of moments. Everywhere else it is a plain, snapping, swipeable
- * scroller, which is what a phone actually wants.
+ * sequence. Everywhere else it is a plain, snapping, swipeable scroller, which
+ * is what a phone actually wants.
  */
 export function StoryGallery() {
   const track = useRef<HTMLDivElement>(null);
@@ -90,47 +92,41 @@ export function StoryGallery() {
   }, [driven]);
 
   return (
-    <section ref={track} className={styles.section} data-theme="vine" id="stories">
+    <section
+      ref={track}
+      className={`${styles.section} ${driven ? styles.pinned : ''}`}
+      data-theme="vine"
+      id="stories"
+    >
       <header className={`shell ${styles.head}`}>
-        <h2 className={`display display--l ${styles.title}`}>
+        <h2 className={`display display--m ${styles.title}`}>
           Our stories{' '}
           <span className="marked">
             don’t wait.
             <Scribble kind="underline" />
           </span>
         </h2>
-        <p className="body">
-          Neither should you. {driven ? 'Keep scrolling.' : 'Swipe through.'}
+        {/* Both lines are approved brand language from the guidelines. */}
+        <p className={`body ${styles.standfirst}`}>
+          They begin with a pour. {driven ? 'Keep scrolling.' : 'Swipe through.'}
         </p>
       </header>
 
       <div className={driven ? styles.viewport : styles.scroller}>
         <ul ref={row} className={styles.row}>
-          {stories.map((story, i) => (
-            <li key={story.id} className={styles.cell} data-i={i % 4}>
-              <article className={styles.story} tabIndex={0} data-cursor="LOOK">
-                <Frame
-                  brief={story.brief}
-                  tone={story.tone}
-                  ratio={story.ratio}
-                  rotate={i % 2 ? 2.5 : -2}
+          {stories.map((story) => (
+            <li key={story.id} className={styles.panel} data-span={story.span}>
+              <figure className={styles.figure}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  className={styles.image}
+                  src={story.src}
+                  alt={story.alt}
+                  loading="lazy"
+                  decoding="async"
                 />
-                <div className={styles.meta}>
-                  {story.caption ? (
-                    <p className={styles.caption}>
-                      {story.caption}
-                      {SHOW_SAMPLE_VALUES && <SampleTag />}
-                    </p>
-                  ) : (
-                    <Pending>Caption awaiting client supply</Pending>
-                  )}
-                  {story.place ? (
-                    <p className={styles.place}>{story.place}</p>
-                  ) : (
-                    <Pending inline>Location TBC</Pending>
-                  )}
-                </div>
-              </article>
+                <figcaption className={styles.caption}>{story.caption}</figcaption>
+              </figure>
             </li>
           ))}
         </ul>

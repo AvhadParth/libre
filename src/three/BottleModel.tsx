@@ -25,6 +25,28 @@ export const BOTTLES = {
 
 export type BottleId = keyof typeof BOTTLES;
 
+/**
+ * The Y rotation, in degrees, that turns each bottle's label to camera.
+ *
+ * The models are photogrammetry scans and arrived at arbitrary orientation, so
+ * these are measured, not assumed. Each bottle was rendered through a full turn
+ * against a magenta ground; inside the silhouette the label is the bright,
+ * desaturated region, so scoring how much of it is visible and how far its
+ * centroid sits from the bottle's centre line finds the front.
+ *
+ * That worked outright for the two still wines. It misfired on the sparkling
+ * pair — their oval badges sit on reflective patterned glass and the metric
+ * latched onto highlights instead — so those two were swept by eye and
+ * confirmed at full size.
+ *
+ * A few degrees either way is invisible; adjust freely.
+ */
+export const LABEL_ANGLE: Record<BottleId, number> = {
+  merlot: THREE.MathUtils.degToRad(177),
+  sauvignon: THREE.MathUtils.degToRad(6),
+  rose: THREE.MathUtils.degToRad(0),
+  sparkling: THREE.MathUtils.degToRad(0),
+};
 /** Every bottle is drawn to this height, so the line-up reads as one family. */
 const STAND_HEIGHT = 3.5;
 

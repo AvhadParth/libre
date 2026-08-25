@@ -13,6 +13,14 @@ import styles from './BubbleField.module.css';
  * client and never reshuffles between renders. Each circle carries
  * `data-bubble` and a depth band so the hero's scroll timeline can drift them
  * at different rates.
+ *
+ * The field is drawn TWICE, once multiplied and once screened, and the two are
+ * crossfaded by `--ground-l` — the lightness of whatever colour the ground
+ * currently is. Multiply is what makes the overlaps mix on a pale ground, but
+ * on a dark one it crushes the circles to nothing, so the dark grounds need
+ * screen instead. Picking one per theme meant the blend mode snapped mid-
+ * transition and the whole field jumped. Crossfading on lightness means it
+ * changes over exactly as gradually as the ground does.
  */
 
 type Bubble = {
@@ -53,6 +61,19 @@ export function BubbleField({
 }) {
   const bubbles = compose(count, seed);
 
+  const circles = (band: string) =>
+    bubbles.map((b, i) => (
+      <circle
+        key={`${band}-${i}`}
+        data-bubble
+        data-depth={b.depth}
+        cx={b.cx}
+        cy={b.cy}
+        r={b.r}
+        fill={b.fill}
+      />
+    ));
+
   return (
     <svg
       className={[styles.field, className].filter(Boolean).join(' ')}
@@ -61,19 +82,11 @@ export function BubbleField({
       aria-hidden="true"
       focusable="false"
     >
-      <g className={styles.blend}>
-        {bubbles.map((b, i) => (
-          <circle
-            key={i}
-            data-bubble
-            data-depth={b.depth}
-            cx={b.cx}
-            cy={b.cy}
-            r={b.r}
-            fill={b.fill}
-          />
-        ))}
-      </g>
+      {/* Both copies carry `data-bubble` and identical geometry, so the hero's
+          drift timeline moves them as one. If only one drifted they would slide
+          apart and the crossfade would show two offset fields. */}
+      <g className={styles.multiply}>{circles('multiply')}</g>
+      <g className={styles.screen}>{circles('screen')}</g>
     </svg>
   );
 }

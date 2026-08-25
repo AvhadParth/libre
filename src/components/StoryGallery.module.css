@@ -2,8 +2,28 @@
   position: relative;
   background: var(--bg);
   color: var(--fg);
-  padding-block: var(--section);
+  padding-block: var(--section) 0;
   overflow: hidden;
+}
+
+/*
+ * Pinned, the section is exactly one viewport: heading in the first row, strip
+ * filling whatever is left. Without this the heading took ~430px off the top
+ * and the panels — sized in svh — ran straight off the bottom of the screen,
+ * taking their captions with them.
+ */
+.pinned {
+  height: 100svh;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  /*
+   * The column MUST be constrained. Without it the single implicit column
+   * sizes to its widest item — the strip, which is several thousand pixels of
+   * panels — and the heading, being a centred `.shell`, gets centred inside
+   * that instead of inside the viewport and lands off-screen to the right.
+   */
+  grid-template-columns: minmax(0, 100%);
+  padding-block: calc(var(--nav-h) + var(--s-3)) 0;
 }
 
 .head {
@@ -12,14 +32,23 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: var(--s-3);
-  margin-bottom: var(--s-4);
+  margin-bottom: var(--s-3);
 }
 .title { margin: 0; max-width: 14ch; }
 .title :global(.marked) > svg { color: var(--accent); }
+.standfirst { max-width: 30ch; }
 
-/* Driven by vertical scroll — no native overflow, GSAP owns the x. */
+/* --------------------------------------------------------------- the strip --- */
+/*
+ * Driven by vertical scroll — no native overflow, GSAP owns the x.
+ *
+ * The panels butt against each other with a hairline of ground between them.
+ * Cards with gaps and captions underneath cost roughly a third of the frame in
+ * furniture; running the images edge to edge at full height spends all of it on
+ * the photography, which is the point of the section.
+ */
 .viewport { overflow: visible; }
-.viewport .row { display: flex; gap: var(--gutter); padding-left: var(--gutter); will-change: transform; }
+.viewport .row { display: flex; gap: 2px; will-change: transform; }
 
 /* Everywhere else: a proper swipeable, snapping scroller. */
 .scroller {
@@ -27,37 +56,60 @@
   overscroll-behavior-x: contain;
   scroll-snap-type: x mandatory;
   scrollbar-width: thin;
-  padding-bottom: var(--s-2);
 }
-.scroller .row {
-  display: flex;
-  gap: var(--s-3);
-  padding-inline: var(--gutter);
-  width: max-content;
+.scroller .row { display: flex; gap: 2px; width: max-content; }
+.scroller .panel { scroll-snap-align: center; }
+
+/* In the pinned layout the strip row sets the height, so panels simply fill
+   it. In the fallback scroller they need an explicit one. */
+.panel {
+  flex: 0 0 auto;
+  position: relative;
+  height: clamp(24rem, 62svh, 40rem);
 }
-.scroller .cell { scroll-snap-align: center; }
+.pinned .viewport,
+.pinned .row,
+.pinned .panel { height: 100%; }
+/* Landscape frames earn more width; portraits stay narrow so the strip keeps
+   a rhythm rather than marching past at one pace. */
+.panel[data-span='wide'] { width: clamp(24rem, 52vw, 60rem); }
+.panel[data-span='tall'] { width: clamp(15rem, 30vw, 34rem); }
 
-.cell { flex: 0 0 auto; width: clamp(15rem, 26vw, 24rem); }
-.cell[data-i='1'] { width: clamp(17rem, 30vw, 28rem); }
-.cell[data-i='3'] { width: clamp(13rem, 21vw, 20rem); }
+.figure { position: relative; margin: 0; width: 100%; height: 100%; }
 
-.story {
-  display: grid;
-  gap: var(--s-2);
-  transition: transform 640ms var(--e-out);
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
-.story:hover, .story:focus-visible { transform: translateY(-8px); }
-.story:focus-visible { outline: 3px solid var(--fg); outline-offset: 8px; }
 
-.meta {
-  display: grid;
-  gap: 0.4rem;
-  opacity: 0.55;
-  transform: translateY(6px);
-  transition: opacity 520ms var(--e-out), transform 620ms var(--e-out);
+/* ------------------------------------------------------------ the caption --- */
+/*
+ * On the image, not under it. Its own gradient rather than a solid plate, so it
+ * stays legible over any part of a photograph without boxing it in.
+ */
+.caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: clamp(2.5rem, 6vh, 4.5rem) var(--s-3) var(--s-3);
+  font-size: var(--t-m);
+  letter-spacing: 0.01em;
+  color: var(--cream);
+  text-wrap: balance;
+  background: linear-gradient(
+    to top,
+    rgb(0 0 0 / 0.62) 0%,
+    rgb(0 0 0 / 0.34) 42%,
+    transparent 100%
+  );
 }
-.story:hover .meta, .story:focus-visible .meta { opacity: 1; transform: translateY(0); }
 
-/* Captions are Avenir, per the guidelines. */
-.caption { font-family: var(--font-text); font-weight: 400; font-size: var(--t-l); letter-spacing: -0.005em; }
-.place { font-size: var(--t-xs); letter-spacing: 0.18em; text-transform: uppercase; color: var(--fg-faint); }
+@media (max-width: 900px) {
+  .panel { height: clamp(24rem, 62svh, 40rem); }
+  .panel[data-span='wide'] { width: min(86vw, 34rem); }
+  .panel[data-span='tall'] { width: min(66vw, 22rem); }
+  .caption { font-size: var(--t-s); }
+}

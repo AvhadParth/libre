@@ -10,43 +10,98 @@
 .title { margin: 0; max-width: 12ch; }
 .title :global(.marked) > svg { color: var(--accent); }
 
-.body {
+/* Avenir, per the guidelines — Chantal is for the heading and the logotype. */
+.standfirst { max-width: 30ch; }
+
+/* ------------------------------------------------------------ the gallery --- */
+/*
+ * Four photographs, staggered so the row reads as an arrangement rather than a
+ * filmstrip. Each carries one brand value; nothing here repeats an image the
+ * section above already used.
+ */
+.gallery {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: var(--gutter);
   align-items: start;
 }
 
-.copy { display: grid; gap: var(--s-2); align-content: start; padding-top: var(--s-2); }
+/*
+ * A slight stagger, not a big one. The captions are a numbered index, so large
+ * offsets scattered them across four different heights and the row stopped
+ * reading as a set. This keeps a moving horizon on the images while the
+ * captions stay close to level.
+ */
+.cell:nth-child(2) { margin-top: clamp(0.75rem, 2.4vw, 2.4rem); }
+.cell:nth-child(3) { margin-top: clamp(0.25rem, 0.9vw, 0.9rem); }
+.cell:nth-child(4) { margin-top: clamp(1.25rem, 3.6vw, 3.6rem); }
 
-/* Two images, off-grid on purpose — the small one crashes into the large one. */
-.art { position: relative; }
-.artSmall {
-  position: absolute;
-  right: -8%;
-  bottom: -14%;
-  width: 44%;
-  box-shadow: 0 20px 60px color-mix(in oklab, var(--rouge) 18%, transparent);
+.figure { margin: 0; display: grid; gap: var(--s-2); }
+
+/*
+ * The resolve. Images arrive drained and come into colour as they pass — the
+ * filter is what animates, so the photograph itself never moves or reflows.
+ */
+.shot {
+  overflow: hidden;
+  border-radius: 2px;
+  filter: grayscale(1) contrast(1.04) saturate(0.9);
+  will-change: filter;
+  box-shadow: 0 1.2rem 2.6rem color-mix(in oklab, var(--rouge) 16%, transparent);
+}
+.shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
 }
 
-.pillars {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--gutter);
-  padding-top: var(--s-4);
-  border-top: 1px solid var(--rule);
-}
+/* ------------------------------------------------------------ the caption --- */
+/* All Avenir. The value name carries by weight and tracking, not by switching
+   to the display face for something that is not a headline. */
+.caption { display: grid; gap: 0.35rem; }
 
-.pillar { display: grid; gap: 0.6rem; align-content: start; }
-.pillarNo {
+.no {
   font-size: var(--t-xs);
   letter-spacing: 0.24em;
   color: var(--fg-faint);
 }
 
-@media (max-width: 900px) {
-  .body { grid-template-columns: 1fr; }
-  .art { max-width: 26rem; }
-  .artSmall { right: -6%; width: 40%; }
-  .pillars { grid-template-columns: 1fr; gap: var(--s-3); }
+.name {
+  font-family: var(--font-text);
+  font-weight: 400;
+  font-size: var(--t-l);
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.sub {
+  display: block;
+  font-size: var(--t-xs);
+  font-weight: 300;
+  letter-spacing: 0.18em;
+  color: var(--fg-faint);
+  margin-top: 0.2rem;
+}
+
+.line {
+  font-size: var(--t-s);
+  color: var(--fg-soft);
+  text-wrap: pretty;
+}
+
+@media (max-width: 1180px) {
+  .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: var(--s-4); }
+  .cell:nth-child(2) { margin-top: clamp(0.75rem, 3vw, 2rem); }
+  .cell:nth-child(3) { margin-top: 0; }
+  .cell:nth-child(4) { margin-top: clamp(0.75rem, 3vw, 2rem); }
+}
+
+@media (max-width: 640px) {
+  .gallery { grid-template-columns: 1fr; gap: var(--s-4); }
+  .cell { margin-top: 0 !important; }
+  .shot img { aspect-ratio: 4 / 3; }
 }

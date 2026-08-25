@@ -1,8 +1,14 @@
+/*
+ * Sol Yellow, full width, no rules. On the section's own cream ground with a
+ * hairline top and bottom this band was a whisper between two pale blocks; as
+ * a solid colour it does the job it exists for, which is punctuation.
+ */
 .marquee {
   overflow: hidden;
   width: 100%;
-  border-block: 1px solid var(--rule);
-  padding-block: clamp(0.7rem, 1.6vw, 1.3rem);
+  background: var(--sol);
+  color: var(--rouge);
+  padding-block: clamp(0.9rem, 2vw, 1.6rem);
 }
 
 .viewport {
@@ -15,20 +21,47 @@
 
 .run { display: flex; align-items: center; flex: 0 0 auto; }
 
+/*
+ * Avenir carries the phrases. Uppercase Avenir Light needs air between the
+ * letters and a little less size than Chantal to hold the same weight on the
+ * line — set solid at Chantal's size it reads bigger and shoutier than the
+ * display face it sits beside.
+ */
 .item {
   display: inline-flex;
   align-items: center;
   gap: clamp(1.2rem, 3vw, 2.6rem);
   padding-inline: clamp(1.2rem, 3vw, 2.6rem);
-  font-family: var(--font-display);
-  font-size: clamp(1.4rem, 3.4vw, 3.1rem);
+  font-family: var(--font-text);
+  font-weight: 400;
+  font-size: clamp(1rem, 2.3vw, 2.05rem);
   line-height: 1;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   white-space: nowrap;
 }
 
-.grape { width: clamp(0.8rem, 1.6vw, 1.4rem); color: var(--accent); flex: 0 0 auto; }
+/* The wordmark keeps the brand face, and its own tight display tracking. */
+.item[data-wordmark] {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.4rem, 3.4vw, 3.1rem);
+  letter-spacing: -0.02em;
+}
+
+/*
+ * The bottle sets the band's height. Sized against the type so the two stay in
+ * proportion at every viewport rather than the bottle swamping the words on
+ * narrow screens.
+ */
+.bottle {
+  height: clamp(3rem, 7vw, 6.5rem);
+  width: auto;
+  flex: 0 0 auto;
+  display: block;
+  /* Lifts them off a flat colour field so they read as objects, not stickers. */
+  filter: drop-shadow(0 0.35rem 0.7rem rgb(69 19 38 / 0.28));
+}
 
 @keyframes slide {
   from { transform: translateX(0); }

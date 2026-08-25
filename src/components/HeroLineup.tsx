@@ -12,6 +12,7 @@ import { Logo } from './brand/Logo';
 import { BubbleField } from './brand/BubbleField';
 import { Arrow } from './brand/Marks';
 import { BottleFallback } from '@/three/BottleFallback';
+import { mixOklab, oklabToRgb, readThemeColours, rgbToCss, type ThemeColours } from '@/lib/colour';
 import styles from './HeroLineup.module.css';
 
 /**
@@ -104,9 +105,64 @@ export function HeroLineup() {
     const st = stage.current;
     if (!el || !st || !live) return;
 
+    /* Read what each theme resolves to, so the blend endpoints come from the
+       stylesheet rather than a second copy of the palette in JS. */
+    const themes = readThemeColours(CARDS.map((c) => c.theme));
+
     const ctx = gsap.context(() => {
       const q = gsap.utils.selector(st);
       const last = CARDS.length - 1;
+
+      /*
+       * The ground is a continuous function of scroll, not a stepped one.
+       *
+       * It used to flip data-theme at the halfway point and let a 900ms CSS
+       * transition catch up. That reads as lag, because the colour is running
+       * on its own clock: nothing moves until you cross the midpoint, then an
+       * animation starts that knows nothing about where you have scrolled to,
+       * racing the snap's own 0.45–1s settle. Two independent timers and a step
+       * function.
+       *
+       * Here the colour IS the scroll position. `focus` sits between two
+       * bottles, and the ground sits between their two themes by the same
+       * fraction — mixed in OKLab so the middle of a blend looks like the
+       * middle rather than dipping through mud. Nothing to fall behind.
+       */
+      const palette: ThemeColours[] = CARDS.map((c) => themes.get(c.theme)!);
+
+      const paintGround = (focus: number) => {
+        const f = Math.max(0, Math.min(last, focus));
+        const i = Math.min(last, Math.floor(f));
+        const j = Math.min(last, i + 1);
+        const t = f - i;
+        const a = palette[i];
+        const b = palette[j];
+        if (!a || !b) return;
+
+        const bg = mixOklab(a.bg, b.bg, t);
+
+        /*
+         * How light the ground currently is, 0 → 1, for the bubble field to
+         * crossfade its multiply and screen layers against. The window is the
+         * empty band between the dark grounds (L ≈ 0.28–0.31) and the pale ones
+         * (L ≈ 0.85), so the handover happens while passing between them and
+         * never while resting on one.
+         */
+        const l = Math.min(1, Math.max(0, (bg[0] - 0.35) / 0.4));
+        el.style.setProperty('--ground-l', l.toFixed(3));
+
+        el.style.setProperty('--bg', rgbToCss(oklabToRgb(bg)));
+        el.style.setProperty('--fg', rgbToCss(oklabToRgb(mixOklab(a.fg, b.fg, t))));
+        el.style.setProperty('--accent', rgbToCss(oklabToRgb(mixOklab(a.accent, b.accent, t))));
+        el.style.setProperty('--accent-2', rgbToCss(oklabToRgb(mixOklab(a.accent2, b.accent2, t))));
+
+        /* data-theme still steps, but nothing colour-critical hangs off it any
+           more — it is what the nav samples to pick its own contrast. */
+        const nearest = CARDS[Math.round(f)].theme;
+        if (el.dataset.theme !== nearest) el.dataset.theme = nearest;
+      };
+
+      paintGround(focusFor(0, last));
 
       ScrollTrigger.create({
         trigger: el,
@@ -164,11 +220,7 @@ export function HeroLineup() {
         onUpdate: (self) => {
           lineup.progress = self.progress;
           lineup.focus = focusFor(self.progress, last);
-
-          // The ground takes the colour of whichever bottle is in front.
-          const i = Math.round(lineup.focus);
-          const theme = CARDS[Math.max(0, Math.min(last, i))].theme;
-          if (el.dataset.theme !== theme) el.dataset.theme = theme;
+          paintGround(lineup.focus);
         },
       });
 

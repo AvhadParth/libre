@@ -9,6 +9,7 @@ import { prefersReducedMotion } from '@/lib/motion';
 import { startScroll, stopScroll } from './SmoothScroll';
 import { Logo } from './brand/Logo';
 import { Grape, Scribble } from './brand/Marks';
+import { parseRgb, rgbToOklab } from '@/lib/colour';
 import styles from './Nav.module.css';
 
 const LINKS = [
@@ -33,13 +34,50 @@ export function Nav() {
     if (!nav) return;
     let frame = 0;
 
+    /* Read the two ink colours off the stylesheet once, rather than keeping a
+       second copy of the palette here. */
+    const root = getComputedStyle(document.documentElement);
+    const INK_DARK = root.getPropertyValue('--rouge').trim() || '#451326';
+    const INK_LIGHT = root.getPropertyValue('--cream').trim() || '#FFF8E8';
+
+    const opaqueBackgroundOf = (start: Element | null) => {
+      let el: Element | null = start;
+      while (el && el !== document.documentElement) {
+        const c = getComputedStyle(el).backgroundColor;
+        // skip transparent and fully-transparent rgba
+        if (c && c !== 'transparent' && !/,\s*0\s*\)$/.test(c)) return c;
+        el = el.parentElement;
+      }
+      return '';
+    };
+
     const sample = () => {
       frame = 0;
       const y = 34;
       const x = Math.round(window.innerWidth / 2);
       const beneath = document
         .elementsFromPoint(x, y)
-        .find((el) => !nav.contains(el) && el.closest('[data-theme]'));
+        .find((el) => !nav.contains(el));
+
+      /*
+       * Take the colour that is actually PAINTED beneath the bar, not the theme
+       * name of the section it belongs to.
+       *
+       * Sections whose ground is interpolated per frame — the hero, and the
+       * story section's turn — carry an inline --bg that no data-theme rule
+       * knows about. Matching on the theme name left the bar painting a hard
+       * slab of the section's nominal colour over a ground that had already
+       * moved on, which is most obvious mid-blend. Reading the computed colour
+       * means the bar merges through every section, blended or not.
+       */
+      const bg = opaqueBackgroundOf(beneath ?? null);
+      if (bg) {
+        nav.style.setProperty('--bg', bg);
+        const light = rgbToOklab(parseRgb(bg))[0] > 0.6;
+        nav.style.setProperty('--fg', light ? INK_DARK : INK_LIGHT);
+      }
+
+      /* Still published for anything keyed to the theme name. */
       const theme = beneath?.closest('[data-theme]')?.getAttribute('data-theme');
       if (theme) nav.dataset.theme = theme;
       setScrolled(window.scrollY > 40);

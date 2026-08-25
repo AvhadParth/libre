@@ -4,30 +4,31 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
-  /* The whole field is a wash, not a foreground element — the bottles and the
-     wordmark have to stay the loudest things in the frame. */
-  opacity: 0.5;
 }
 
-/* Multiply is what makes the overlaps mix new tones out of the palette rather
-   than stack opaque discs, exactly as the guidelines draw it. */
-.blend {
+/*
+ * Two copies of the same field, crossfaded by the lightness of the ground.
+ *
+ * `--ground-l` is written per frame by the hero: 0 on a dark ground, 1 on a
+ * pale one. Multiply mixes the overlaps beautifully on cream, mist and sol but
+ * crushes to nothing on rouge and vine; screen does the reverse. Selecting one
+ * per theme meant the mode snapped partway through a transition and the field
+ * visibly jumped, so instead both are always present and their weights slide.
+ *
+ * The two carry different base opacities because screen reads much hotter than
+ * multiply at the same value.
+ */
+.multiply {
   mix-blend-mode: multiply;
+  opacity: calc(0.5 * var(--ground-l, 1));
 }
 
-/* On a dark ground multiply would crush the circles to nothing, so the field
-   switches to screen and lightens instead. Same device, inverted. */
-:global([data-theme='rouge']) .blend,
-:global([data-theme='vine']) .blend,
-:global([data-theme='azul']) .blend {
+.screen {
   mix-blend-mode: screen;
-}
-:global([data-theme='rouge']) .field,
-:global([data-theme='vine']) .field,
-:global([data-theme='azul']) .field {
-  opacity: 0.28;
+  opacity: calc(0.28 * (1 - var(--ground-l, 1)));
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .field { opacity: 0.32; }
+  .multiply { opacity: calc(0.34 * var(--ground-l, 1)); }
+  .screen   { opacity: calc(0.2 * (1 - var(--ground-l, 1))); }
 }

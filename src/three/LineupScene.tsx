@@ -6,7 +6,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { AdaptiveDpr } from '@react-three/drei';
 import type { Tier } from '@/lib/motion';
 import { Studio } from './Studio';
-import { BottleModel, preloadBottle, type BottleId } from './BottleModel';
+import { BottleModel, preloadBottle, LABEL_ANGLE, type BottleId } from './BottleModel';
 import { lineup } from './lineup';
 
 export const hasWebGL = () => {
@@ -34,16 +34,41 @@ export const LINEUP: readonly BottleId[] = ['merlot', 'sauvignon', 'rose', 'spar
 const DRIFT = 1.15;          // lateral travel across a full step
 const RECEDE = 1.1;          // how far a bottle drops back as it leaves
 const SHRINK = 0.88;         // and how much smaller it gets
-/* Index distance over which a bottle goes from solid to gone. Below 0.5 the
-   handover finishes before the next bottle starts arriving. */
-const FADE_SPAN = 0.46;
-/* The focused bottle sits dead centre. The bottles that slide off to the left
-   pass behind the copy, so they are pushed back and blurred rather than moved
-   aside — see FOCUS_RANGE below. */
-const ROW_OFFSET = 0;
+
+/* --- the handover -------------------------------------------------------- */
+/*
+ * Rotation is a function of scroll POSITION, not scroll speed.
+ *
+ * Each bottle's angle is its label angle plus its distance from focus times
+ * TURN. Three things fall out of that, all of them free:
+ *
+ *   - a bottle in focus is, by definition, at exactly its label angle, so the
+ *     label always ends up facing the reader with no seeking logic at all;
+ *   - scrolling one step turns the outgoing bottle through TURN while the
+ *     incoming one turns into place by the same amount, so the two cross
+ *     mid-turn and merge;
+ *   - scrubbing backwards reverses it exactly, because there is no velocity or
+ *     momentum anywhere in it.
+ */
+const TURN = Math.PI;
+
+/*
+ * The bottles have to stay visible while they turn, or the rotation happens
+ * off-screen and the handover reads as a plain crossfade. Opacity therefore
+ * holds near full for the first third of a step and only then gives way, so the
+ * turn is seen and the merge happens in the middle where the two overlap.
+ */
+const FADE_FROM = 0.34;
+const FADE_TO = 0.62;
 
 const damp = (a: number, b: number, lambda: number, dt: number) =>
   THREE.MathUtils.damp(a, b, lambda, dt);
+
+/** 0 below `from`, 1 above `to`, eased in between. */
+const smoothstep = (from: number, to: number, x: number) => {
+  const t = Math.min(1, Math.max(0, (x - from) / (to - from)));
+  return t * t * (3 - 2 * t);
+};
 
 /* How much world space the shot has to hold. */
 const FRAME_H = 5.3;
@@ -71,14 +96,33 @@ function frameDistance(aspect: number, fovDeg: number) {
 function Row({ ids }: { ids: readonly BottleId[] }) {
   const group = useRef<THREE.Group>(null);
   const slots = useRef<(THREE.Group | null)[]>([]);
+  const shadows = useRef<(THREE.Mesh | null)[]>([]);
   const fade = useRef<number[]>([]);
-  const spin = useRef(0);
+
+  /* A soft ellipse the bottle lands on. Generated rather than loaded so the
+     scene still costs nothing to download. */
+  const shadowTex = useMemo(() => {
+    const size = 128;
+    const c = document.createElement('canvas');
+    c.width = c.height = size;
+    const g = c.getContext('2d')!;
+    const grad = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+    grad.addColorStop(0, 'rgba(0,0,0,0.55)');
+    grad.addColorStop(0.45, 'rgba(0,0,0,0.22)');
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
+    g.fillStyle = grad;
+    g.fillRect(0, 0, size, size);
+    const tex = new THREE.CanvasTexture(c);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    return tex;
+  }, []);
+
+  useEffect(() => () => shadowTex.dispose(), [shadowTex]);
 
   useFrame((_, dt) => {
     const g = group.current;
     if (!g) return;
     const d = Math.min(dt, 0.05);
-    spin.current += d * 0.42;
 
     const focus = lineup.focus;
     g.position.y = damp(g.position.y, -1.72, 4, d);
@@ -90,26 +134,62 @@ function Row({ ids }: { ids: readonly BottleId[] }) {
       const delta = i - focus;                       // <0 passed, >0 upcoming
       const away = Math.abs(delta);
 
-      // Position is a function of distance from focus, not of index, so every
-      // bottle takes exactly the same path through the frame.
+      /*
+       * The turn. Position, not speed — so the bottle in focus sits exactly at
+       * its label angle, and the one arriving turns into place by the same
+       * amount the one leaving turns away. They cross mid-turn and merge.
+       */
+      slot.rotation.y = (LABEL_ANGLE[ids[i]] ?? 0) + delta * TURN;
+
       slot.position.x = damp(slot.position.x, delta * DRIFT, 6, d);
       slot.position.z = damp(slot.position.z, -away * RECEDE, 6, d);
       slot.scale.setScalar(damp(slot.scale.x, 1 - (1 - SHRINK) * Math.min(1, away), 6, d));
-      slot.rotation.y = spin.current * (0.7 + i * 0.15) + delta * 0.22;
 
-      const target = Math.max(0, 1 - away / FADE_SPAN);
-      const o = damp(fade.current[i] ?? (i === 0 ? 1 : 0), target, 7, d);
+      /* Held near full while the turn is happening, then given away quickly. */
+      const target = 1 - smoothstep(FADE_FROM, FADE_TO, away);
+      const o = damp(fade.current[i] ?? (i === 0 ? 1 : 0), target, 8, d);
       fade.current[i] = o;
       slot.visible = o > 0.01;
       slot.traverse((n) => {
         const m = (n as THREE.Mesh).material as THREE.MeshStandardMaterial | undefined;
         if (m && 'opacity' in m) m.opacity = o;
       });
+
+      /* The shadow tightens under whichever bottle is standing forward. */
+      const sh = shadows.current[i];
+      if (sh) {
+        const settled = 1 - Math.min(1, away);
+        const spread = 1.45 - 0.4 * settled;
+        sh.scale.set(spread, spread, 1);
+        sh.position.set(slot.position.x, 0.005, slot.position.z);
+        const mat = sh.material as THREE.MeshBasicMaterial;
+        mat.opacity = o * settled * 0.45;
+        sh.visible = mat.opacity > 0.01;
+      }
     });
   });
 
   return (
     <group ref={group}>
+      {/* Shadows are siblings of the bottles, not children, so they stay flat
+          on the ground plane while the bottle above them tips. */}
+      {ids.map((id, i) => (
+        <mesh
+          key={`shadow-${id}`}
+          ref={(el) => { shadows.current[i] = el; }}
+          rotation-x={-Math.PI / 2}
+          renderOrder={-1}
+        >
+          <circleGeometry args={[0.85, 40]} />
+          <meshBasicMaterial
+            map={shadowTex}
+            transparent
+            depthWrite={false}
+            opacity={0}
+          />
+        </mesh>
+      ))}
+
       {ids.map((id, i) => (
         <group
           key={id}

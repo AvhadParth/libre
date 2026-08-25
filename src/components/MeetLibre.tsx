@@ -1,21 +1,96 @@
+'use client';
+
+import { useEffect, useRef } from 'react';
+import { gsap, ScrollTrigger } from '@/lib/gsap';
+import { prefersReducedMotion } from '@/lib/motion';
+import { BRAND } from '@/lib/content-config';
 import { Reveal } from './Reveal';
 import { Themed } from './Themed';
-import { Frame } from './Frame';
 import { Marquee } from './Marquee';
 import { Scribble } from './brand/Marks';
 import styles from './MeetLibre.module.css';
 
-const PILLARS = [
-  { title: 'Freedom', line: 'Nobody has to explain why they are not drinking.' },
-  { title: 'Joy', line: 'The loud part of the evening, kept intact.' },
-  { title: 'Expression', line: 'Your table, your rules, your playlist.' },
-];
+/**
+ * The editorial introduction — shown rather than explained.
+ *
+ * The four brand values each ride on a photograph instead of sitting in a row
+ * of copy underneath one. Every image arrives in greyscale and resolves into
+ * full colour as it passes, one after another: the same "coming alive" the
+ * vocabulary wall had, moved off the type and onto the pictures, so the section
+ * argues with images rather than with paragraphs.
+ *
+ * Typography follows the guidelines strictly here. Chantal appears once, on the
+ * section heading; the values, their lines and the standfirst are all Avenir,
+ * which is what the guidelines specify for everything that is not a headline.
+ */
 
 /**
- * The editorial introduction. Deliberately the calmest section on the site —
- * after the pour, the visitor has earned somewhere to put their eyes.
+ * One photograph per value, chosen so nothing repeats what the section above
+ * already used. Order matches BRAND.values.
  */
+const SHOTS = [
+  {
+    src: '/photography/range-bubbles-01.png',
+    alt: 'All five LIBRE bottles arranged on overlapping circles of brand colour.',
+  },
+  {
+    src: '/photography/sparkling-rose-beach-01.png',
+    alt: 'Sparkling Rosé and a filled glass on a beach at sunset.',
+  },
+  {
+    src: '/photography/range-table-02.png',
+    alt: 'The LIBRE range on a dark marble table, glasses and silk laid ready.',
+  },
+  {
+    src: '/photography/sparkling-white-beach-01.png',
+    alt: 'Sparkling White in a net bag on sand beside a poured glass.',
+  },
+] as const;
+
 export function MeetLibre() {
+  const gallery = useRef<HTMLOListElement>(null);
+
+  useEffect(() => {
+    const el = gallery.current;
+    if (!el) return;
+
+    const shots = Array.from(el.querySelectorAll<HTMLElement>('[data-shot]'));
+    if (!shots.length) return;
+
+    if (prefersReducedMotion()) {
+      shots.forEach((s) => { s.style.filter = 'none'; });
+      return;
+    }
+
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: el,
+          /* A long run so the four resolve one at a time rather than together
+             in the half-screen it takes the row to enter. */
+          start: 'top 92%',
+          end: 'bottom 46%',
+          scrub: 0.6,
+          invalidateOnRefresh: true,
+        },
+        defaults: { ease: 'none' },
+      });
+      tl.to({}, { duration: 1 }, 0);
+
+      shots.forEach((shot, i) => {
+        tl.to(
+          shot,
+          { filter: 'grayscale(0) contrast(1) saturate(1)', duration: 0.22 },
+          (i / shots.length) * 0.74,
+        );
+      });
+
+      return () => ScrollTrigger.refresh();
+    }, el);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
     <Themed theme="cream" id="meet" className={styles.section}>
       <div className={`shell ${styles.head}`}>
@@ -29,52 +104,36 @@ export function MeetLibre() {
           </h2>
         </Reveal>
 
+        {/* The best line in the section, promoted to carry it. */}
         <Reveal delay={0.1}>
-          <p className="lede">
-            Non-alcoholic wine, built for the part of wine nobody argues about.
+          <p className={`lede ${styles.standfirst}`}>
+            The table. The noise. The second bottle. That was always the good bit.
           </p>
         </Reveal>
       </div>
 
-      <div className={`shell ${styles.body}`}>
-        <Reveal className={styles.copy} variant="lines" as="div">
-          <p className="body body--wide">
-            The table. The noise. The second bottle. The story someone tells
-            badly and everyone hears twice. That was always the good bit.
-          </p>
-          <p className="body body--wide">
-            LIBRE keeps all of it and quietly drops the rules that came with it —
-            the correct glass, the correct year, the correct face to make while
-            you swirl. Freedom, joy, flavour and expression, with nothing to
-            apologise for and no occasion to wait for.
-          </p>
-        </Reveal>
-
-        <div className={styles.art}>
-          <Frame
-            brief="Four friends at a small table, late afternoon light, mid-argument about something unimportant. Nobody posing."
-            tone="mist" ratio="4 / 5" rotate={-2}
-          />
-          <Frame
-            brief="Close crop: a glass being set down on a wooden table, condensation, a hand still holding it."
-            tone="vine" ratio="1 / 1" rotate={4} className={styles.artSmall}
-          />
-        </div>
-      </div>
-
-      <ul className={`shell ${styles.pillars}`}>
-        {PILLARS.map((pillar, i) => (
-          <li key={pillar.title}>
-            <Reveal delay={i * 0.08}>
-              <div className={styles.pillar}>
-                <span className={styles.pillarNo}>0{i + 1}</span>
-                <h3 className="display display--s">{pillar.title}</h3>
-                <p className="body">{pillar.line}</p>
-              </div>
+      <ol ref={gallery} className={`shell ${styles.gallery}`}>
+        {BRAND.values.map((value, i) => (
+          <li key={value.name} className={styles.cell}>
+            <Reveal delay={i * 0.06} variant="scale">
+              <figure className={styles.figure}>
+                <div className={styles.shot} data-shot>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={SHOTS[i].src} alt={SHOTS[i].alt} loading="lazy" decoding="async" />
+                </div>
+                <figcaption className={styles.caption}>
+                  <span className={styles.no}>0{i + 1}</span>
+                  <span className={styles.name}>
+                    {value.name}
+                    {value.sub ? <span className={styles.sub}>{value.sub}</span> : null}
+                  </span>
+                  <span className={styles.line}>{value.line}</span>
+                </figcaption>
+              </figure>
             </Reveal>
           </li>
         ))}
-      </ul>
+      </ol>
 
       <Marquee
         items={['Pure joy', 'No occasion required', 'Wine without the rules', 'Just LIBRE']}

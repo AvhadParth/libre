@@ -33,7 +33,16 @@
   align-items: stretch;
 }
 
+/*
+ * The whole card is the link.
+ *
+ * Done by stretching the product name's anchor over the card rather than
+ * wrapping everything in one — a card holds a quantity stepper and an add
+ * button, and nesting buttons inside an anchor is invalid and unusable with a
+ * keyboard or a screen reader. One real link, one hit area, controls on top.
+ */
 .card {
+  position: relative;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -147,6 +156,17 @@
 .name { margin: 0; font-size: clamp(1.15rem, 1.6vw, 1.45rem); line-height: 1; }
 .link { color: inherit; }
 .link:hover, .link:focus-visible { text-decoration: underline; text-underline-offset: 0.18em; }
+/* The hit area: covers the card, sits under the buy controls. */
+.link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+/* Keyboard focus has to show on the card, since the anchor itself is only the
+   few words of the name. */
+.card:focus-within { outline: 2px solid var(--rouge); outline-offset: 3px; }
+.link:focus-visible { outline: none; }
 
 .variant,
 .personality,
@@ -174,6 +194,10 @@
 /* The buy row sits on the floor of every card, so the buttons line up across
    the whole grid however long the copy above them runs. */
 .buy {
+  /* Above the card-wide hit area, or the stepper and the button would just
+     follow the link. */
+  position: relative;
+  z-index: 2;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   gap: 0.5rem;

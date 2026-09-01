@@ -78,8 +78,16 @@ export function CartDrawer() {
             <ul className={styles.lines}>
               {cart.lines.map(({ product, qty }) => (
                 <li key={product.slug} className={styles.line} data-line>
+                  {/* The bottle itself, on its own colour — this was the drawn
+                      grape mark, the last placeholder artwork in the cart. */}
                   <div className={styles.swatch} data-theme={product.theme} aria-hidden="true">
-                    <Grape className={styles.swatchGrape} />
+                    <img
+                      className={styles.swatchBottle}
+                      src={`/photography/shelf/${product.slug}.webp`}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                    />
                   </div>
                   <div className={styles.lineBody}>
                     <Link href={`/wine/${product.slug}`} className={styles.lineName} onClick={cart.close}>

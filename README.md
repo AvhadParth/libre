@@ -146,7 +146,7 @@ serves the source PNGs; every use is a WebP derivative generated from them:
 | Set | Used by | Size |
 |---|---|---|
 | `cards/{slug}-studio.webp` · `cards/{slug}-cutout.webp` | shop cards, product heroes, "or maybe one of these" | 533 KB for all ten, from 12.2 MB of PNG |
-| `shelf/{slug}.webp` | the range shelf, cart line items | ~65 KB each |
+| `shelf/{slug}.webp` | the range shelf, the cart drawer and `/cart` line items | ~65 KB each |
 | `marquee/{slug}.webp` | the brand band | ~65 KB each |
 | `vineyard.webp` | the origin section's ground | 88 KB, from 2.3 MB |
 

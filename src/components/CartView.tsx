@@ -6,7 +6,7 @@ import { useCart } from '@/lib/cart';
 import { formatPrice } from '@/lib/products';
 import { Themed } from './Themed';
 import { Pending, SampleTag } from './Pending';
-import { Arrow, BottleMark, Grape } from './brand/Marks';
+import { Arrow, Grape } from './brand/Marks';
 import styles from './CartView.module.css';
 
 /**
@@ -60,7 +60,13 @@ export function CartView() {
           {cart.lines.map(({ product, qty }) => (
             <li key={product.slug} className={styles.line}>
               <div className={styles.art} data-theme={product.theme} aria-hidden="true">
-                <BottleMark glass="var(--accent)" foil="var(--bg)" ink="var(--rouge)" label="var(--bg)" />
+                <img
+                  className={styles.artBottle}
+                  src={`/photography/shelf/${product.slug}.webp`}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
               </div>
 
               <div className={styles.info}>

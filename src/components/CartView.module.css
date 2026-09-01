@@ -36,13 +36,23 @@
 }
 
 .art {
-  display: grid; place-items: center;
+  position: relative;
   aspect-ratio: 3 / 4;
   background: var(--bg);
   border-radius: var(--radius);
-  padding: 0.6rem;
+  overflow: hidden;
 }
-.art svg { height: 100%; width: auto; }
+/* Absolute for the same reason as the drawer's swatch: percentage heights do
+   not resolve against an aspect-ratio box. */
+.artBottle {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 8% 14%;
+  box-sizing: border-box;
+  object-fit: contain;
+}
 
 .info { display: grid; gap: 0.3rem; justify-items: start; }
 .name { font-family: var(--font-display); font-size: var(--d-s); letter-spacing: -0.015em; }

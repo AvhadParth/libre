@@ -15,7 +15,18 @@
   top: calc(var(--nav-h) + 2rem);
 }
 
-.groups { display: grid; gap: var(--s-4); }
+/*
+ * Ingredients runs full width; the two fact tables sit side by side beneath it.
+ * Stacked in one column they ran to nearly 2,000px with the whole left half of
+ * the section empty — a lot of scrolling for eighteen short facts.
+ */
+.groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: var(--s-4) var(--gutter);
+  align-items: start;
+}
+.groups > :first-child { grid-column: 1 / -1; }
 
 .group { display: grid; gap: var(--s-2); align-content: start; }
 .groupHead {

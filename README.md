@@ -25,9 +25,16 @@ labels** — not authored. What is still missing is still marked as missing.
 per-100 ml nutrition, alcohol declarations, and the Extremadura provenance.
 
 **Still awaiting client supply:** tasting notes / flavour axis values, food
-pairings, photography, social handles, contact details, legal copy, and the
-Gold Pearl back label (its MRP and panel are carried over from the rest of the
-range and marked `SAMPLE`).
+pairings, social handles, contact details and legal copy.
+
+**Gold Pearl** is confirmed by the client as a full product — its price is no
+longer marked `SAMPLE`. Its ingredients and nutrition panel is still the
+sparkling range's, carried over because no Gold Pearl back label was supplied,
+and is worth checking against the real label.
+
+**Photography has landed** and is live across the site. The two sections that
+were built entirely on unapproved data — the flavour axes and the food pairings
+— are no longer rendered rather than shown empty; see *Dormant components*.
 
 Everything still outstanding renders through a visible marker so it can never
 quietly graduate into approved copy:
@@ -40,9 +47,9 @@ quietly graduate into approved copy:
 
 **Sample marking is per product, per field.** Each `Product` in
 `src/lib/products.ts` carries an `estimates` array naming the fields that are
-still stand-ins; only those render a `SAMPLE` pill. Today only Gold Pearl has
-any. `SHOW_SAMPLE_VALUES` in `src/lib/content-config.ts` still gates the
-remaining global stand-ins (the story wall, flavour meters).
+still stand-ins; only those render a `SAMPLE` pill. **No product carries one
+today.** `SHOW_SAMPLE_VALUES` in `src/lib/content-config.ts` still gates the
+remaining global stand-ins.
 
 The brand-voice copy (personality lines, section headings, the "rules crossed
 out" list) **is** authored — it is tone, not a claim, and is offered for
@@ -66,6 +73,20 @@ out first. Serving them from the deployed site is a separate question and still
 needs a web licence — see [FONTS.md](FONTS.md).
 
 ---
+
+## Derived assets
+
+Two things in `src/lib/` are generated from supplied artwork rather than
+hand-authored, and both note their provenance in the file:
+
+- **`spain-map.ts`** — the guidelines' region sheet is a flat 828px JPEG with
+  its caption baked in, which cannot draw itself on a scroll or magnify without
+  going soft. It is traced into two vector paths (the landmass, and Extremadura
+  alone) so the origin section can stroke the coastline on and then zoom into
+  the region sharply. The trace had to seal the slit the pin's leader line cut
+  through the coast, and filter out the caption's antialiased edges, which fall
+  in the same grey band as the map.
+- **`public/photography/*/**.webp`** — every image the site serves.
 
 ## Handover checklist
 
@@ -118,16 +139,24 @@ strings.
 Clear space is enforced by the `--clear-space` token; the mark is never skewed,
 filtered, recoloured beyond `currentColor`, or animated internally.
 
-### 3. Photography
-Every image slot is a `<Frame>`. Passing `src` and `alt` replaces the
-placeholder composition with the real photograph — no other change:
+### 3. Photography — SUPPLIED, and live
+Product and lifestyle photography is in `public/photography/`. The site never
+serves the source PNGs; every use is a WebP derivative generated from them:
 
-```tsx
-<Frame brief="…" src="/photography/dinner-01.jpg" alt="…" />
-```
+| Set | Used by | Size |
+|---|---|---|
+| `cards/{slug}-studio.webp` · `cards/{slug}-cutout.webp` | shop cards, product heroes, "or maybe one of these" | 533 KB for all ten, from 12.2 MB of PNG |
+| `shelf/{slug}.webp` | the range shelf, cart line items | ~65 KB each |
+| `marquee/{slug}.webp` | the brand band | ~65 KB each |
+| `vineyard.webp` | the origin section's ground | 88 KB, from 2.3 MB |
 
-The `brief` on each frame is a genuine shot direction. The full shot list is
-simply every `brief` string in the codebase:
+The source PNGs (~36 MB) are still committed and are **not** referenced by any
+component. They are worth pruning before launch.
+
+**Remaining placeholders.** `<Frame>` still renders shot briefs on `/world`,
+`/stories` and inside `Scrapbook`, which those two pages still use. Passing
+`src` and `alt` replaces the composition with the real photograph, no other
+change. The outstanding shot list is every `brief` string left:
 `grep -rn 'brief=' src/`
 
 ### 4. The 3D bottle label — DONE, supplied artwork
@@ -173,6 +202,12 @@ NEWSLETTER_TOKEN=…            # optional bearer token
 ```
 
 ### 7. Commerce
+**The shop flow is closed.** `Shop` in the nav goes to `/wine#shop` — the
+buyable cards on the range page — and from there: card → product page → add to
+cart → cart. Every step is live. (`Shop` used to point at `/cart`, so it took
+you to your own empty basket rather than to the range; the cart has its own
+control at the end of the bar.)
+
 The cart is fully live — line items, quantities, persistence, subtotals — and
 stops exactly at checkout. Point the Checkout button in
 `src/components/CartView.tsx` at your provider (Shopify, Stripe, Commerce
@@ -219,13 +254,34 @@ unreadable. The travel between colours is designed instead: the liquid wipe, the
 dot fields, the curved leading edge of a page transition.
 
 ```
-Cava Cream → Tempranillo Rouge → Cream → Sol Yellow
-           → Verdejo Vine → (vibe-driven) → Azul → Airén Mist → Cream → Azul
+Cava Cream → Tempranillo Rouge → Cream → Sol Yellow → Cream
+           → Cream (the shop) → Azul (the origin) → Cream
 ```
 
 Every pairing in the palette scores **≥ 9:1** contrast.
 
-### The signature sequence
+**Product heroes do not use the product's own colour.** A bottle photographed on
+its own brand ground disappears into it — the rosé was pink on pink, the gold
+was gold on gold. Each product carries a separate `heroGround`, chosen by
+measuring that bottle's **body and foil cap** against all eleven grounds and
+taking the pairing whose *weaker* separation was strongest:
+
+| | ground | weaker separation |
+|---|---|---|
+| Merlot | Cava Cream | 4.1:1 |
+| Sauvignon Blanc | Butter | 3.4:1 |
+| Sparkling Rosé | Tempranillo Rouge | 5.7:1 |
+| Sparkling White | Azul | foil 6.6:1 — no ground flatters green glass *and* gold |
+| Gold Pearl | Verdejo Vine | 4.2:1 |
+
+### The homepage hero — what actually renders
+`src/components/HeroLineup.tsx`. Four bottles on one line; scrolling rotates the
+current bottle and hands over to the next, and the ground interpolates between
+their brand colours in **OKLab** so the blend never passes through mud. Each
+bottle's label angle is measured, not eyeballed, so every one faces front when
+it settles.
+
+### The pour sequence — built, not currently mounted
 `src/components/HeroPour.tsx` is one 520vh scroll track with a sticky stage. A
 single scrubbed GSAP timeline drives both the typography and `seq.progress`, and
 the 3D reads that value in `useFrame` — so the words and the bottle are never a
@@ -245,6 +301,9 @@ Details worth keeping:
   rim torus restores the bright edge the missing thickness would have given.
 - Studio lighting is built from `Lightformer` geometry, so the scene lights
   itself in a few kilobytes with **no HDRI download** and works offline.
+
+It is kept because it is the strongest thing in the repo, but the homepage
+currently opens on the line-up instead.
 
 ---
 
@@ -268,8 +327,12 @@ The experiment never costs anyone the content.
 ## Performance
 
 - Three.js, drei and the whole scene are a **dynamically imported chunk** — the
-  homepage's first load is ~174 kB, and the typography paints before the 3D
-  arrives.
+  typography paints before the 3D arrives.
+- **The 3D is homepage-only.** Product pages moved to photography, which took
+  `/wine/[slug]` from 6.99 kB to 3.73 kB and dropped the three.js chunk from
+  five routes.
+- Every photograph is served as a WebP derivative, never the source PNG — see
+  *Photography*.
 - The canvas renders **zero frames** while scrolled off screen.
 - A device tier (`useTier`) scales lathe segments, pixel ratio, particle counts
   and material cost; low-end devices drop transmission entirely.
@@ -279,18 +342,57 @@ The experiment never costs anyone the content.
 
 ---
 
-## Structure
+## What each page is made of
+
+**`/` — the homepage**, nine sections:
+
+| Section | Component | What it does |
+|---|---|---|
+| The line-up | `HeroLineup` | four bottles, scroll-driven handover, OKLab ground |
+| Not serious | `BrandStory` | the accusation rolls, the sheet is pulled off |
+| Meet LIBRE | `MeetLibre` | four values, photographs resolving greyscale → colour |
+| What are you pouring? | `ProductShowcase` | the range on one shelf, one readout |
+| When? | `WhenSection` | answers land until the question is buried |
+| Our stories | `StoryGallery` | a film strip travelling sideways |
+| Go on, then. | `VibeSelector` | **the shop** — five cards, studio shot dissolving to cut-out on hover, real add-to-cart |
+| Where it comes from | `OriginStory` | Spain draws itself, magnifies to Fuente del Maestre |
+| Ready when you are | `FinalCTA` | **reads the cart** — line items and checkout, or a way back to the shop |
+
+**`/wine`** — editorial opening, then `ProductShowcase` + the shop cards +
+`FinalCTA`. This is what `Shop` in the nav points at.
+
+**`/wine/[slug]`** — `ProductHero` (buy panel, one screen), marquee,
+`WhatsInside`, and a short sideways row. Deliberately four sections, ~4,500px.
+
+**`/world`, `/stories`** — still carry `Scrapbook` and its shot briefs.
 
 ```
 src/
   app/                  routes: / /world /wine /wine/[slug] /stories /cart /legal/[doc]
-  components/           Nav, HeroPour, BrandStory, ProductShowcase, VibeSelector,
-                        StoryGallery, Scrapbook, ChaosButton, FinalCTA, CartView…
+  components/           Nav, HeroLineup, BrandStory, MeetLibre, ProductShowcase,
+                        WhenSection, StoryGallery, VibeSelector, OriginStory,
+                        FinalCTA, ProductHero, WhatsInside, CartView…
   components/brand/     Logo, Marks (grape · glass · scribble · dots), Confetti
   three/                BottleScene, Bottle, WineGlass, PourStream, Studio,
                         profiles (lathe silhouettes), sequence (the choreography)
-  lib/                  products, stories, cart, palette, motion, content-config
+  lib/                  products, stories, cart, colour (OKLab), spain-map,
+                        palette, motion, content-config
 ```
+
+## Dormant components
+
+Built, tested, and **not currently rendered**. None are deleted; each is one
+line away from returning.
+
+| Component | Why it is not mounted |
+|---|---|
+| `FlavourProfile` | every axis value is `null` — it rendered five empty meters reading *VALUE TBC* |
+| `PairingSection` | its three pairings are *"Awaiting pairing 01/02/03"* |
+| `ProductBottle` | product heroes use photography; only four of five products have a `.glb`, so Gold Pearl's page had no bottle at all |
+| `ProductCard` | the product page's sideways row is a compact photographic row now |
+| `HeroPour` | the homepage opens on `HeroLineup` |
+
+`FlavourProfile` and `PairingSection` return the moment their data is approved.
 
 `src/three/sequence.ts` is worth reading first — the entire POP → POUR
 choreography is one timing map, and every object derives its own behaviour from

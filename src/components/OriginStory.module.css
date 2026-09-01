@@ -1,0 +1,234 @@
+/*
+ * Where it comes from.
+ *
+ * The section is a tall scroll track; the stage inside it is what gets pinned,
+ * so the whole four-beat sequence plays in one held frame and then releases.
+ */
+.section {
+  position: relative;
+  /* The length of the scroll IS the length of the story. Short enough that it
+     never feels like the page has stopped, long enough that the draw reads. */
+  height: 320svh;
+  background: var(--azul);
+  color: var(--cream);
+}
+
+.stage {
+  /* Held by sticky rather than by ScrollTrigger's pin — see the note in the
+     component for why a second pin could not be measured correctly here. */
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  display: grid;
+  grid-template-areas: 'stack';
+  place-items: center;
+  isolation: isolate;
+}
+
+/* ------------------------------------------------------------ the ground --- */
+/*
+ * Atmosphere only. Heavily blurred and dimmed: at full strength a golden
+ * vineyard fights both the map outline and the type, and the section is meant
+ * to be quiet. The scale keeps the blur's soft edges off the frame.
+ */
+.shot {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.08);
+  filter: blur(16px) saturate(0.9);
+  opacity: 0.92;
+  will-change: transform;
+}
+
+/*
+ * Azul over the top, so cream type has a guaranteed ground under it.
+ *
+ * Gradient ONLY. This previously carried `var(--azul)` as a second background
+ * layer, which is a solid fill — the veil was opaque azul rather than a scrim,
+ * and with the photograph also at half opacity the vineyard came through at
+ * roughly nine per cent. The section looked like flat blue. The scrim now
+ * deepens toward the edges and lets the middle read.
+ */
+.veil {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: radial-gradient(
+    125% 95% at 50% 42%,
+    rgb(0 39 82 / 0.42) 0%,
+    rgb(0 39 82 / 0.72) 55%,
+    rgb(0 39 82 / 0.93) 100%
+  );
+  opacity: 0.74;
+}
+
+/* --------------------------------------------------------------- the map --- */
+/* Map and copy share one cell — auto-placement would otherwise give them a row
+   each and stack them down the page instead of over one another. */
+.map {
+  grid-area: stack;
+  position: relative;
+  z-index: 2;
+  /* Lifts the outline off the photograph without darkening the whole frame. */
+  filter: drop-shadow(0 1px 2px rgb(0 18 38 / 0.55));
+  width: min(62vh, 74vw);
+  height: auto;
+  overflow: visible;
+  /* transform-origin is set inline from the pin's own coordinates, so the
+     magnification is one scale about the town rather than a scale plus a
+     translation that would need recomputing on every resize. */
+  will-change: transform;
+}
+
+.coast {
+  fill: none;
+  stroke: var(--cream);
+  /*
+   * In potrace's coordinate space, which MAP_TRANSFORM scales by 0.1 — so this
+   * renders at about a tenth of its number, roughly 2px on screen. Expressed
+   * pre-scale because `vector-effect: non-scaling-stroke` cannot be used here:
+   * it makes Chrome compute the dash in screen space and breaks the draw-on.
+   */
+  stroke-width: 19;
+  stroke-linejoin: round;
+  /*
+   * No `vector-effect: non-scaling-stroke` here on purpose — it makes Chrome
+   * compute dash lengths in screen space, which breaks the draw-on entirely.
+   * The stroke is thinned by the timeline as the map magnifies instead.
+   */
+}
+
+.region {
+  fill: var(--sol);
+  opacity: 0;
+}
+
+.pin { fill: var(--rouge); stroke: var(--cream); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.halo { fill: none; stroke: var(--cream); stroke-width: 1.2; vector-effect: non-scaling-stroke; opacity: 0; }
+
+/* -------------------------------------------------------------- the words --- */
+/*
+ * The copy sits over the magnified region rather than beside it — by the time
+ * it arrives the map is a field of colour, which is the ground it wants.
+ */
+.copy {
+  position: relative;
+  z-index: 3;
+  grid-area: stack;
+  /* Held to the left so the region has somewhere to be, and clear of the bar,
+     which the eyebrow was running underneath. */
+  justify-self: start;
+  align-self: center;
+  display: grid;
+  justify-items: start;
+  align-content: center;
+  gap: var(--s-2);
+  max-width: min(36rem, 54vw);
+  padding-inline: var(--gutter);
+  padding-block: calc(var(--nav-h) + var(--s-2)) var(--s-3);
+}
+
+/* Hidden until the timeline brings them in; scoped to [data-animated] so the
+   words are present if the script never runs. */
+.section[data-animated] .copy [data-line] {
+  opacity: 0;
+  transform: translateY(26px);
+}
+
+.eyebrow {
+  margin: 0;
+  font-family: var(--font-text);
+  font-size: var(--t-xs);
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--sol);
+}
+
+/* Chantal once, on the place name. Everything else is Avenir. */
+/* A step down from the page's other display--l headings: this one shares the
+   frame with the map rather than owning it. */
+.title { margin: 0 0 var(--s-2); font-size: clamp(1.9rem, 4vw, 3.2rem); }
+
+.facts {
+  display: grid;
+  gap: var(--s-2);
+  margin: 0;
+  max-width: 34rem;
+}
+.fact { display: grid; gap: 0.15rem; }
+.factKey {
+  font-family: var(--font-text);
+  font-size: var(--t-xs);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--sol);
+}
+.factValue {
+  margin: 0;
+  font-family: var(--font-text);
+  font-size: var(--t-m);
+  line-height: 1.45;
+  color: var(--cream);
+}
+
+.close {
+  margin: var(--s-2) 0 0;
+  max-width: 30rem;
+  font-family: var(--font-text);
+  font-size: var(--t-l);
+  line-height: 1.35;
+  color: var(--cream);
+}
+
+@media (max-width: 860px) {
+  .section { height: 300svh; }
+  .map { width: min(52vh, 86vw); }
+  .copy { max-width: 100%; }
+  /*
+   * There is no room to move the region out of the text's way on a narrow
+   * screen, so the copy carries its own ground. Cream over the dimmed region
+   * alone measures about 4.2:1 — under AA for text this size; the panel takes
+   * it to roughly 8:1 without hiding the colour behind it.
+   */
+  .copy::before {
+    content: '';
+    position: absolute;
+    inset: -1rem calc(var(--gutter) * -1);
+    z-index: -1;
+    background: linear-gradient(
+      to bottom,
+      rgb(0 39 82 / 0) 0%,
+      rgb(0 39 82 / 0.82) 8%,
+      rgb(0 39 82 / 0.82) 92%,
+      rgb(0 39 82 / 0) 100%
+    );
+  }
+  .factValue { font-size: var(--t-s); }
+  .close { font-size: var(--t-m); }
+}
+
+/*
+ * No pin, no scrub — the finished state, rendered straight. The map is drawn,
+ * the region filled and the words present, so nothing is lost by not moving.
+ */
+.section[data-static='true'] { height: auto; }
+.section[data-static='true'] .stage {
+  height: auto;
+  min-height: 100svh;
+  padding-block: var(--section);
+}
+.section[data-static='true'] .coast { stroke-dasharray: none; }
+.section[data-static='true'] .region { opacity: 1; }
+.section[data-static='true'] .map { width: min(40vh, 60vw); }
+.section[data-static='true'] .copy [data-line] { opacity: 1; transform: none; }
+.section[data-static='true'] .shot { filter: blur(18px) saturate(0.85); }
+
+@media (prefers-reduced-motion: reduce) {
+  .shot { transform: none; }
+}

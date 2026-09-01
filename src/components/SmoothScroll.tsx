@@ -42,7 +42,30 @@ export function SmoothScroll() {
     gsap.ticker.lagSmoothing(0);
     ScrollTrigger.refresh();
 
+    /*
+     * And again once the page has stopped changing height. Pin spacers, late
+     * fonts and lazily-loaded images all move everything below them, and a
+     * trigger measured before that shift stays measured against a page that no
+     * longer exists. Debounced, because image loads arrive in bursts.
+     */
+    let settle: ReturnType<typeof setTimeout> | undefined;
+    let last = document.documentElement.scrollHeight;
+    const remeasure = () => {
+      const h = document.documentElement.scrollHeight;
+      if (Math.abs(h - last) < 4) return;
+      last = h;
+      clearTimeout(settle);
+      settle = setTimeout(() => ScrollTrigger.refresh(), 150);
+    };
+    const onLoad = () => ScrollTrigger.refresh();
+    window.addEventListener('load', onLoad);
+    const ro = new ResizeObserver(remeasure);
+    ro.observe(document.documentElement);
+
     return () => {
+      clearTimeout(settle);
+      ro.disconnect();
+      window.removeEventListener('load', onLoad);
       gsap.ticker.remove(raf);
       lenis.destroy();
       instance = null;

@@ -1,95 +1,238 @@
+/*
+ * Regular product cards, with one thing that is ours.
+ *
+ * Even grid, equal heights, image over copy over price over button — the order
+ * people already know how to read. The signature is the image panel: it carries
+ * that bottle's own colour out of the palette, so the row reads as a band of
+ * LIBRE colour rather than five grey thumbnails.
+ */
 .section {
-  position: relative;
-  overflow: hidden;
   padding-block: var(--section);
+  background: var(--cream);
+  color: var(--rouge);
+}
+
+.intro { display: grid; gap: var(--s-2); margin-bottom: var(--s-5); }
+.title { margin: 0; max-width: 14ch; }
+.title :global(.marked) > svg { color: var(--sol); }
+.standfirst { margin: 0; font-family: var(--font-text); font-size: var(--t-m); }
+
+/* --------------------------------------------------------------- the grid --- */
+.grid {
+  display: grid;
+  /*
+   * Big cards, three to a row, wrapping to two underneath. Capping the grid's
+   * own width is what fixes the column count — five across made every card too
+   * small to show a bottle properly, and letting auto-fit run to the full shell
+   * would give four-plus-one, which reads as a mistake rather than a layout.
+   */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+  max-width: 74rem;
+  margin-inline: auto;
+  gap: clamp(1.1rem, 2vw, 2rem);
+  align-items: stretch;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--cream);
+  border: 1px solid color-mix(in oklab, var(--rouge) 16%, transparent);
+  border-radius: 6px;
+  transition:
+    transform 420ms var(--e-out),
+    box-shadow 420ms var(--e-out),
+    border-color 420ms var(--e-out);
+}
+.card:hover,
+.card:focus-within {
+  transform: translateY(-5px);
+  border-color: color-mix(in oklab, var(--rouge) 30%, transparent);
+  box-shadow: 0 1rem 2rem rgb(69 19 38 / 0.1);
+}
+
+/* -------------------------------------------------------------- the panel --- */
+/*
+ * The only themed part of the card. Keeping the body on cream means five
+ * saturated grounds in a row read as a colour band rather than as noise.
+ */
+.panel {
+  position: relative;
+  display: grid;
+  place-items: center;
+  /* Portrait: these are bottles. */
+  aspect-ratio: 4 / 5;
   background: var(--bg);
   color: var(--fg);
-  /* The ground itself is part of the answer. */
-  transition: background-color 780ms var(--e-inout), color 780ms var(--e-inout);
+  overflow: hidden;
 }
 
-.dots {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  color: var(--fg);
-  opacity: 0.09;
-  transition: opacity 780ms var(--e-out);
-  animation: float 26s linear infinite;
+/*
+ * The dissolve.
+ *
+ * Both plates are absolutely positioned, and that is load-bearing: a percentage
+ * height never resolved against this panel, because its own height comes from
+ * aspect-ratio and Chrome computed `height: 100%` on a grid item inside it as
+ * auto — the image rendered at its intrinsic 1537px and overflow cropped it to
+ * just the bottle's cap. Taking the height from an absolute containing block
+ * cannot fail that way at any card size.
+ */
+.shot {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /*
+   * One long, even curve for both plates. The site's usual --e-out settles hard
+   * at the start, which on a cross-fade reads as a cut rather than a dissolve.
+   */
+  transition:
+    opacity 780ms cubic-bezier(0.33, 0, 0.2, 1),
+    transform 980ms cubic-bezier(0.33, 0, 0.2, 1);
+  will-change: opacity, transform;
 }
-.section[data-tempo='fast'] .dots { opacity: 0.16; animation-duration: 9s; }
-.section[data-tempo='slow'] .dots { opacity: 0.06; animation-duration: 46s; }
 
-@keyframes float {
-  from { transform: translate3d(0, 0, 0); }
-  to { transform: translate3d(-40px, -40px, 0); }
+/* The styled shot fills the frame, and drifts back as it goes. */
+.scene { object-fit: cover; opacity: 1; transform: scale(1); }
+
+/* The cut-out sits on the product's own colour, which the scene was hiding. */
+.cut {
+  object-fit: contain;
+  padding: 7% 13%;
+  box-sizing: border-box;
+  opacity: 0;
+  transform: scale(0.94);
+  filter: drop-shadow(0 0.5rem 1rem rgb(20 8 14 / 0.3));
 }
 
-.inner { display: grid; gap: var(--s-4); position: relative; z-index: 1; }
+.card:hover .scene,
+.card:focus-within .scene { opacity: 0; transform: scale(1.08); }
+.card:hover .cut,
+.card:focus-within .cut { opacity: 1; transform: scale(1); }
 
-.head { display: grid; gap: var(--s-2); }
-.title { margin: 0; max-width: 14ch; }
-.title :global(.marked) > svg { color: var(--accent); }
-
-/* ------------------------------------------------------------- the chips --- */
-.picker { display: flex; flex-wrap: wrap; gap: 0.6rem; }
-
-.chip {
-  padding: 0.85em 1.5em;
-  font-size: var(--t-s);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--fg);
-  border: 1px solid var(--rule);
+/*
+ * Its own dark pill, not the theme's ink.
+ *
+ * Taking colour from the theme made it cream on three of the five cards, and
+ * the studio photograph underneath is a pale beige — so the badge vanished on
+ * exactly those. A translucent dark pill clears 7.6:1 even composited over pure
+ * white, and still reads once the plate dissolves to a dark brand ground.
+ */
+.badge {
+  position: absolute;
+  z-index: 1;
+  top: 0.7rem;
+  left: 0.7rem;
+  font-family: var(--font-text);
+  font-size: var(--t-xs);
+  letter-spacing: 0.14em;
+  padding: 0.3em 0.65em;
+  color: var(--cream);
+  background: rgb(30 15 22 / 0.78);
   border-radius: var(--radius-soft);
-  transition: background 420ms var(--e-out), color 420ms var(--e-out),
-              border-color 420ms var(--e-out), transform 560ms var(--e-elastic);
-}
-.chip:hover, .chip:focus-visible { transform: translateY(-3px) scale(1.03); border-color: var(--fg); }
-.chip[data-active='true'] {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--rouge);
-  transform: rotate(-1.5deg) scale(1.04);
+  backdrop-filter: blur(3px);
 }
 
-/* ------------------------------------------------------------ the answer --- */
-.result {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: var(--gutter);
-  align-items: center;
-  animation: settle 720ms var(--e-out) both;
-}
-@keyframes settle {
-  from { opacity: 0; transform: translateY(18px); }
-  to { opacity: 1; transform: translateY(0); }
+/* --------------------------------------------------------------- the body --- */
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1rem 1rem 1.1rem;
+  flex: 1;
 }
 
-.mood { display: grid; gap: var(--s-3); justify-items: start; }
-.moodLine { margin: 0; max-width: 14ch; }
-.motif { display: block; width: clamp(3.5rem, 8vw, 6.5rem); color: var(--accent); }
-.motif svg { width: 100%; height: auto; overflow: visible; }
+/* Chantal on the product name — it is the card's headline. */
+.name { margin: 0; font-size: clamp(1.15rem, 1.6vw, 1.45rem); line-height: 1; }
+.link { color: inherit; }
+.link:hover, .link:focus-visible { text-decoration: underline; text-underline-offset: 0.18em; }
 
-.suggestion {
+.variant,
+.personality,
+.price { margin: 0; font-family: var(--font-text); }
+
+.variant {
+  font-size: var(--t-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--rouge) 78%, var(--cream));
+}
+.personality { font-size: var(--t-s); }
+
+.price {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+/* The buy row sits on the floor of every card, so the buttons line up across
+   the whole grid however long the copy above them runs. */
+.buy {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
-  gap: var(--s-3);
+  gap: 0.5rem;
   align-items: center;
-  padding: var(--s-3);
-  border: 1px solid var(--rule);
-  border-radius: var(--radius);
+  margin-top: auto;
+  padding-top: 0.8rem;
 }
-.suggestionArt { height: clamp(5rem, 13vh, 8.5rem); }
-.suggestionArt svg { height: 100%; width: auto; }
-.suggestionBody { display: grid; gap: 0.6rem; justify-items: start; }
-.suggestionName { margin: 0; }
 
-@media (max-width: 900px) {
-  .result { grid-template-columns: 1fr; }
-  .suggestion { grid-template-columns: 1fr; justify-items: start; }
-  .suggestionArt { height: 5rem; }
+.qty {
+  display: grid;
+  grid-template-columns: 1.5rem 1.5rem 1.5rem;
+  align-items: center;
+  justify-items: center;
+  height: 2.5rem;
+  border: 1px solid color-mix(in oklab, var(--rouge) 26%, transparent);
+  border-radius: var(--radius-soft);
+  font-family: var(--font-text);
+  font-size: var(--t-s);
 }
+.qty button { width: 100%; height: 100%; color: var(--rouge); font-size: 1rem; line-height: 1; border-radius: 50%; }
+.qty button:hover { background: color-mix(in oklab, var(--rouge) 10%, transparent); }
+.qty button:focus-visible { outline: 2px solid var(--rouge); outline-offset: -2px; }
+
+.add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-width: 0;
+  height: 2.5rem;
+  padding-inline: 0.7rem;
+  background: var(--rouge);
+  color: var(--cream);
+  border-radius: var(--radius-soft);
+  font-family: var(--font-text);
+  font-size: var(--t-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: background 280ms var(--e-out), color 280ms var(--e-out);
+}
+.add:hover { background: color-mix(in oklab, var(--rouge) 84%, #000); }
+.add:focus-visible { outline: 2px solid var(--rouge); outline-offset: 3px; }
+.add[data-added] { background: var(--sol); color: var(--rouge); }
+.addArrow { width: 0.85em; height: auto; flex: 0 0 auto; }
+
+@media (max-width: 560px) {
+  /* Two up rather than one — five full-width cards is a long scroll. */
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .body { padding: 0.85rem 0.8rem 0.9rem; }
+  .add { letter-spacing: 0.04em; padding-inline: 0.5rem; }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .dots { animation: none; }
-  .result { animation: none; }
+  .card, .add { transition: none; }
+  .card:hover, .card:focus-within { transform: none; }
+  /* The swap still happens, just without the travel. */
+  .shot { transition: opacity 200ms linear; }
+  .scene, .cut { transform: none; }
+  .card:hover .scene, .card:focus-within .scene { transform: none; }
+  .card:hover .cut, .card:focus-within .cut { transform: none; }
 }

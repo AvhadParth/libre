@@ -1,61 +1,115 @@
 'use client';
 
 import Link from 'next/link';
-import { useRef } from 'react';
-import { burstFrom } from './brand/Confetti';
-import { Reveal } from './Reveal';
+import { useCart } from '@/lib/cart';
+import { formatPrice } from '@/lib/products';
 import { Themed } from './Themed';
-import { Arrow, BottleMark, Dots, Glass, Grape, Scribble } from './brand/Marks';
+import { SampleTag } from './Pending';
+import { Arrow, Dots } from './brand/Marks';
 import styles from './FinalCTA.module.css';
 
 /**
- * The last page of the magazine.
+ * The last thing on the page, and the only part of it that knows who is reading.
  *
- * Everything the site has been throwing around comes back — grape, glass,
- * scribble, dot — and then all of it goes quiet around one bottle on Cava
- * Cream. The only loud thing left is the invitation.
+ * The page now ends on where the wine comes from, so the honest next beat is
+ * what you are actually leaving with. If there is something in the cart this
+ * section shows it and offers checkout; if there is not, it points back up at
+ * the shelf. Nothing else on the homepage responds to what the visitor has
+ * done.
+ *
+ * What it deliberately no longer does:
+ *
+ * It used to headline "Just LIBRE." — which is the payoff the story section
+ * spends its entire crossed-out sequence earning, and which the marquee says a
+ * third time. Repeating a punchline does not reinforce it, it spends it, so the
+ * words here are new.
+ *
+ * It also used to send people to /wine, a listing page, from below five working
+ * add-to-cart buttons. Anyone who has scrolled this far has already been offered
+ * the range; the useful link is forward to checkout, not back to a catalogue.
+ *
+ * And the bottle is a photograph now — the drawn BottleMark that stood here was
+ * the last placeholder artwork left on the homepage.
  */
 export function FinalCTA() {
-  const cta = useRef<HTMLAnchorElement>(null);
+  const cart = useCart();
+
+  /*
+   * The cart is read from localStorage after mount, so the first paint cannot
+   * know it. Rather than flash the empty state and swap, the section holds a
+   * reserved space until it does know — the height is fixed either way, so
+   * nothing below it moves when the answer arrives.
+   */
+  const ready = cart.hydrated;
+  const filled = ready && cart.count > 0;
+  const bottles = cart.count === 1 ? 'bottle' : 'bottles';
 
   return (
     <Themed theme="cream" className={styles.section}>
       <Dots className={styles.dots} size={30} radius={2.4} />
 
-      {/* the cast, returning quietly */}
-      <Grape className={`${styles.mark} ${styles.markA}`} />
-      <Glass className={`${styles.mark} ${styles.markB}`} level={0.5} liquid="var(--rouge)" />
-      <Scribble kind="wave" className={`${styles.mark} ${styles.markC}`} />
-      <Grape className={`${styles.mark} ${styles.markD}`} />
+      <div className={`shell ${styles.inner}`} data-state={!ready ? 'pending' : filled ? 'full' : 'empty'}>
+        {filled ? (
+          <>
+            <div className={styles.copy}>
+              <p className={styles.eyebrow}>Ready when you are</p>
+              <h2 className={`display display--l ${styles.title}`}>
+                {cart.count} {bottles} waiting.
+              </h2>
 
-      <div className={styles.inner}>
-        <Reveal variant="scale">
-          <div className={styles.bottle}>
-            <BottleMark glass="var(--vine)" foil="var(--sol)" ink="var(--rouge)" label="var(--cream)" />
+              <ul className={styles.lines}>
+                {cart.lines.map((line) => (
+                  <li key={line.slug} className={styles.line}>
+                    <img
+                      className={styles.thumb}
+                      src={`/photography/shelf/${line.slug}.webp`}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <span className={styles.lineName}>{line.product.name}</span>
+                    <span className={styles.lineQty}>×{line.qty}</span>
+                    <span className={styles.linePrice}>
+                      {line.product.price === null
+                        ? '—'
+                        : formatPrice(line.product.price * line.qty, line.product.currency)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+
+              <p className={styles.total}>
+                <span className={styles.totalLabel}>Subtotal</span>
+                <span className={styles.totalValue}>
+                  {cart.subtotal === null ? '—' : formatPrice(cart.subtotal)}
+                  {cart.subtotalIsEstimate && <SampleTag />}
+                </span>
+              </p>
+
+              <div className={styles.actions}>
+                <Link href="/cart" className={`btn btn--lg btn--accent ${styles.cta}`} data-cursor="LET'S POUR">
+                  Checkout <Arrow className="btn__arrow" />
+                </Link>
+                <a href="#shop" className={styles.secondary} data-cursor="ONE MORE">
+                  Add another
+                </a>
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className={styles.copy}>
+            <p className={styles.eyebrow}>Nothing in the basket</p>
+            <h2 className={`display display--l ${styles.title}`}>Empty-handed?</h2>
+            <p className={styles.lede}>
+              Five bottles, all 0.0%, all a few scrolls back up.
+            </p>
+            <div className={styles.actions}>
+              <a href="#shop" className={`btn btn--lg btn--accent ${styles.cta}`} data-cursor="LET'S POUR">
+                Pick a bottle <Arrow className="btn__arrow" />
+              </a>
+            </div>
           </div>
-        </Reveal>
-
-        <Reveal variant="mask" delay={0.1}>
-          <h2 className={`display display--hero ${styles.title}`}>Just LIBRE.</h2>
-        </Reveal>
-
-        <Reveal delay={0.2}>
-          <p className={`lede ${styles.line}`}>
-            Pop it. Pour it. Let the stories do the rest.
-          </p>
-        </Reveal>
-
-        <Reveal delay={0.28}>
-          <Link
-            ref={cta}
-            href="/wine"
-            className={`btn btn--lg btn--accent ${styles.cta}`}
-            data-cursor="LET'S POUR"
-            onMouseEnter={() => burstFrom(cta.current, { count: 26, power: 0.6 })}
-          >
-            Shop LIBRE <Arrow className="btn__arrow" />
-          </Link>
-        </Reveal>
+        )}
       </div>
     </Themed>
   );

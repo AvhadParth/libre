@@ -1,40 +1,157 @@
-.section {
-  position: relative;
-  overflow: hidden;
-  display: grid;
-  place-items: center;
-  min-height: 100svh;
-  padding: var(--section) var(--gutter);
-  text-align: center;
+/*
+ * The closing section. Cream, after the deep Azul of the origin story — the
+ * page exhales here before the footer.
+ */
+.section { position: relative; overflow: hidden; }
+
+.dots {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  color: var(--fg);
+  opacity: 0.08;
 }
 
-.dots { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--fg); opacity: 0.07; }
-
+/*
+ * Reserved height. The cart is only known after mount, so this holds the same
+ * space whichever answer arrives and nothing below it jumps when it does.
+ */
 .inner {
   position: relative;
-  z-index: 2;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  min-height: 26rem;
+}
+.inner[data-state='pending'] { visibility: hidden; }
+
+.copy {
   display: grid;
   justify-items: center;
+  text-align: center;
   gap: var(--s-2);
   max-width: 52rem;
+  animation: settle 520ms var(--e-out) both;
+}
+@keyframes settle {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.bottle { height: clamp(7rem, 22svh, 13rem); margin-bottom: var(--s-2); }
-.bottle svg { height: 100%; width: auto; }
+.eyebrow {
+  margin: 0;
+  font-family: var(--font-text);
+  font-size: var(--t-xs);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+}
 
+/* Chantal once, on the count. */
 .title { margin: 0; }
-.line { max-width: none; color: var(--fg-soft); }
-.cta { margin-top: var(--s-3); }
 
-/* The returning cast — present, but standing well back. */
-.mark { position: absolute; z-index: 1; color: var(--fg); opacity: 0.14; }
-.markA { width: clamp(3rem, 8vw, 7rem); top: 14%; left: 8%; rotate: -18deg; }
-.markB { width: clamp(2.6rem, 6vw, 5rem); bottom: 16%; left: 16%; rotate: 9deg; }
-.markC { width: clamp(5rem, 14vw, 12rem); height: 3rem; top: 22%; right: 9%; overflow: visible; }
-.markD { width: clamp(2rem, 5vw, 4rem); bottom: 22%; right: 14%; rotate: 26deg; }
+.lede {
+  margin: 0;
+  font-family: var(--font-text);
+  font-size: var(--t-l);
+  color: var(--fg);
+  max-width: 30ch;
+}
 
-@media (max-width: 900px) {
-  .markA { left: -2%; }
-  .markB { left: 4%; }
-  .markC { right: -4%; }
+/* ------------------------------------------------------------- the lines --- */
+/*
+ * What is actually in the cart, shown rather than summarised — real cut-outs,
+ * the same plates the shelf uses.
+ */
+.lines {
+  display: grid;
+  gap: 0.15rem;
+  /* Near the headline's own measure. At 30rem under a display--l title the
+     receipt read as a footnote rather than as the point of the section. */
+  width: min(100%, 44rem);
+  margin: var(--s-3) 0 0;
+  text-align: left;
+}
+
+.line {
+  display: grid;
+  grid-template-columns: 3.6rem minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 1.2rem;
+  padding-block: 0.9rem;
+  border-bottom: 1px solid color-mix(in oklab, var(--fg) 16%, transparent);
+  font-family: var(--font-text);
+  font-size: var(--t-m);
+}
+
+.thumb { height: 4.6rem; width: 100%; object-fit: contain; }
+.lineName { min-width: 0; overflow-wrap: anywhere; }
+.lineQty { color: var(--fg-soft); font-variant-numeric: tabular-nums; min-width: 2.4rem; text-align: right; }
+.linePrice { font-variant-numeric: tabular-nums; min-width: 5.5rem; text-align: right; }
+
+.total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  width: min(100%, 44rem);
+  margin: 0.9rem 0 0;
+  font-family: var(--font-text);
+}
+.totalLabel {
+  font-size: var(--t-s);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+}
+.totalValue {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  line-height: 1;
+}
+
+/* ----------------------------------------------------------- the actions --- */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2) var(--s-3);
+  margin-top: var(--s-3);
+}
+.cta { flex: 0 0 auto; }
+
+.secondary {
+  font-family: var(--font-text);
+  font-size: var(--t-xs);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--fg);
+  border-bottom: 1px solid color-mix(in oklab, var(--fg) 40%, transparent);
+  padding-bottom: 0.15em;
+  transition: border-color 280ms var(--e-out);
+}
+.secondary:hover,
+.secondary:focus-visible { border-bottom-color: var(--fg); }
+
+@media (max-width: 640px) {
+  .inner { min-height: 24rem; }
+  .line {
+    grid-template-columns: 2.6rem minmax(0, 1fr) auto auto;
+    gap: 0.7rem;
+    font-size: var(--t-s);
+    padding-block: 0.7rem;
+  }
+  .thumb { height: 3.4rem; }
+  .linePrice { min-width: 4.6rem; }
+  .lineQty { min-width: 2rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .copy { animation: none; }
 }

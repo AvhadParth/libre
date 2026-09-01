@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { Logo } from './brand/Logo';
-import { Grape } from './brand/Marks';
+import { Scribble } from './brand/Marks';
 import { Newsletter } from './Newsletter';
-import { products } from '@/lib/products';
+import { ORIGIN, products } from '@/lib/products';
 import { Themed } from './Themed';
 import styles from './Footer.module.css';
 
@@ -20,12 +20,15 @@ const WORLD = [
   { href: '/wine', label: 'The Wine' },
 ];
 
-/* ⚠ Social handles and contact details are PLACEHOLDERS awaiting client supply. */
-const SOCIAL = [
-  { href: '#', label: 'Instagram' },
-  { href: '#', label: 'TikTok' },
-  { href: '#', label: 'Spotify' },
-];
+/*
+ * ⚠ No social handles have been supplied.
+ *
+ * Three links pointing at `#` under a "Follow" heading are worse than no links:
+ * they look finished, they are keyboard-focusable, and they go nowhere. Until
+ * real handles arrive the column states the platforms as plain text and says
+ * so once, rather than three dead links plus a caveat underneath them.
+ */
+const PLATFORMS = ['Instagram', 'TikTok', 'Spotify'];
 
 const LEGAL = [
   { href: '/legal/privacy', label: 'Privacy' },
@@ -36,23 +39,37 @@ const LEGAL = [
 export function Footer() {
   return (
     <Themed as="footer" theme="azul" className={styles.footer} flush>
+      {/*
+        The sign-off carries the one ask. The goodbye used to hold the left half
+        and leave the right empty, with the newsletter pushed into a corner
+        below it; putting them on one line gives the empty half a job and makes
+        the last thing before the legal line a single clear invitation.
+      */}
       <div className={styles.goodbye}>
-        <h2 className={`display display--xl ${styles.bye}`}>
-          Okay.
-          <br />
-          Bye. <span className={styles.wave}>👋</span>
-        </h2>
-        <Grape className={styles.grape} />
-      </div>
+        <div className={styles.sayBye}>
+          <h2 className={`display display--xl ${styles.bye}`}>
+            Okay.
+            <br />
+            Bye.
+          </h2>
+          {/*
+            The brand's own wave, not the system emoji that stood here. A `👋`
+            renders as Apple's glossy hand on one machine and Google's flat one
+            on another — it was the only emoji on the site, and the last image
+            on every page was somebody else's illustration sitting next to
+            Chantal. `wave` is one of the supplied scribbles.
+          */}
+          <Scribble kind="wave" className={styles.wave} />
 
-      <div className={styles.top}>
-        <div className={styles.brandCol}>
-          <Link href="/" aria-label="LIBRE — home">
+          <Link href="/" aria-label="LIBRE — home" className={styles.mark}>
             <Logo />
           </Link>
           <p className={styles.tagline}>Wine. Without the rules.</p>
         </div>
-        <Newsletter compact />
+
+        <div className={styles.signup}>
+          <Newsletter compact />
+        </div>
       </div>
 
       <nav className={styles.columns} aria-label="Footer">
@@ -75,22 +92,24 @@ export function Footer() {
         <div>
           <h3 className={styles.colHead}>Follow</h3>
           <ul className={styles.list}>
-            {SOCIAL.map((l) => (
-              <li key={l.label}>
-                <a href={l.href} className="link" data-placeholder>
-                  {l.label}
-                </a>
-              </li>
+            {PLATFORMS.map((name) => (
+              <li key={name}><span className={styles.platform}>{name}</span></li>
             ))}
           </ul>
           <p className={styles.pending}>Handles awaiting client supply</p>
         </div>
         <div>
           <h3 className={styles.colHead}>Contact</h3>
-          <ul className={styles.list}>
-            <li><span className={styles.pending}>Email awaiting client supply</span></li>
-            <li><span className={styles.pending}>Address awaiting client supply</span></li>
-          </ul>
+          {/* The house and the town are known and verified; the trading address
+              and an enquiries inbox are not, so only the gap is flagged. */}
+          <address className={styles.address}>
+            {ORIGIN.house}
+            <br />
+            {ORIGIN.town}, {ORIGIN.province}
+            <br />
+            {ORIGIN.country}
+          </address>
+          <p className={styles.pending}>Enquiries address awaiting client supply</p>
         </div>
       </nav>
 

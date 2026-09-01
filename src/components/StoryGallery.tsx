@@ -67,6 +67,14 @@ export function StoryGallery() {
           pin: true,
           invalidateOnRefresh: true,
           anticipatePin: 1,
+          /*
+           * This is the only pinned section on the page, and its spacer is
+           * 3,817px tall. Anything measured below it must be measured AFTER
+           * that spacing is applied, or it comes out exactly that much too
+           * high — which is what happened to the origin section further down.
+           * A higher priority refreshes this one first.
+           */
+          refreshPriority: 1,
         },
       });
 

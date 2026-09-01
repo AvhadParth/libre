@@ -9,10 +9,52 @@
 .moreHead h2 { margin: 0; }
 .arrow { width: 16px; display: inline-block; vertical-align: middle; margin-left: 0.4em; }
 
-.moreGrid {
+/* A sideways glance, not a second catalogue. */
+.moreRow {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--gutter);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+  gap: clamp(1rem, 2vw, 1.75rem);
   align-items: start;
 }
-@media (max-width: 680px) { .moreGrid { grid-template-columns: 1fr; } }
+
+.otherLink {
+  display: grid;
+  gap: 0.45rem;
+  color: var(--fg);
+}
+
+/* The product's own colour, so the row still reads as the range. */
+.otherArt {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 5;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--bg);
+  transition: transform 420ms var(--e-out);
+}
+.otherArt img {
+  width: 100%;
+  height: 100%;
+  padding: 9% 16%;
+  box-sizing: border-box;
+  object-fit: contain;
+  transition: transform 460ms var(--e-out);
+}
+.otherLink:hover .otherArt,
+.otherLink:focus-visible .otherArt { transform: translateY(-4px); }
+.otherLink:hover .otherArt img { transform: scale(1.05); }
+
+.otherName {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+  line-height: 1;
+}
+.otherLine {
+  font-family: var(--font-text);
+  font-size: var(--t-xs);
+  color: var(--fg-soft);
+}
+
+.moreTitle { margin: 0; }

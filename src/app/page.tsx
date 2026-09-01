@@ -5,8 +5,7 @@ import { ProductShowcase } from '@/components/ProductShowcase';
 import { WhenSection } from '@/components/WhenSection';
 import { StoryGallery } from '@/components/StoryGallery';
 import { VibeSelector } from '@/components/VibeSelector';
-import { Scrapbook } from '@/components/Scrapbook';
-import { ChaosButton } from '@/components/ChaosButton';
+import { OriginStory } from '@/components/OriginStory';
 import { FinalCTA } from '@/components/FinalCTA';
 
 /**
@@ -27,8 +26,7 @@ export default function Home() {
       <WhenSection />
       <StoryGallery />
       <VibeSelector />
-      <Scrapbook />
-      <ChaosButton />
+      <OriginStory />
       <FinalCTA />
     </>
   );

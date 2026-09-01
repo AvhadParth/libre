@@ -4,11 +4,8 @@ import { notFound } from 'next/navigation';
 import { getProduct, products } from '@/lib/products';
 import { ProductHero } from '@/components/ProductHero';
 import { WhatsInside } from '@/components/WhatsInside';
-import { FlavourProfile } from '@/components/FlavourProfile';
-import { PairingSection } from '@/components/PairingSection';
 import { Themed } from '@/components/Themed';
 import { Reveal } from '@/components/Reveal';
-import { ProductCard } from '@/components/ProductCard';
 import { Marquee } from '@/components/Marquee';
 import { Arrow } from '@/components/brand/Marks';
 import styles from './product.module.css';
@@ -47,29 +44,40 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         speed={30}
       />
 
-      <div id="flavour">
-        <FlavourProfile product={product} />
-      </div>
-
       <WhatsInside product={product} />
-      <PairingSection product={product} />
 
+      {/*
+        A short row, not a second catalogue. The old block ran to 2,100px of
+        full product cards — a whole page of browsing appended to the page you
+        had already chosen. Four cut-outs and a name is enough to move sideways.
+      */}
       <Themed theme="cream" className={styles.more}>
         <div className={`shell ${styles.moreHead}`}>
           <Reveal variant="mask">
-            <h2 className="display display--m">Or maybe one of these.</h2>
+            <h2 className={`display display--m ${styles.moreTitle}`}>Or maybe one of these.</h2>
           </Reveal>
           <Link href="/wine" className="link">
             All the wine <Arrow className={styles.arrow} />
           </Link>
         </div>
-        <div className={`shell ${styles.moreGrid}`}>
-          {others.map((other, i) => (
-            <Reveal key={other.slug} delay={i * 0.08}>
-              <ProductCard product={other} index={i} />
-            </Reveal>
+        <ul className={`shell ${styles.moreRow}`}>
+          {others.map((other) => (
+            <li key={other.slug}>
+              <Link href={`/wine/${other.slug}`} className={styles.otherLink} data-cursor="MEET IT">
+                <span className={styles.otherArt} data-theme={other.theme}>
+                  <img
+                    src={`/photography/cards/${other.slug}-cutout.webp`}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </span>
+                <span className={styles.otherName}>{other.name}</span>
+                <span className={styles.otherLine}>{other.personality}</span>
+              </Link>
+            </li>
           ))}
-        </div>
+        </ul>
       </Themed>
     </>
   );

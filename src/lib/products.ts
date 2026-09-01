@@ -19,6 +19,16 @@ export type Product = {
   /** Short editorial description. Contains no flavour, health or origin claims. */
   blurb: string;
   theme: ThemeName;
+  /**
+   * The ground the product's own hero stands on.
+   *
+   * Deliberately NOT `theme`. A bottle photographed on its own brand colour
+   * disappears into it — the rosé on Airén Mist and the gold on Sol were pink
+   * on pink and gold on gold. These were picked by measuring each bottle's body
+   * and foil against every ground in the palette and taking the pairing whose
+   * weaker separation was strongest, so both the glass and the cap read.
+   */
+  heroGround: ThemeName;
   altTheme: ThemeName;
   /** Supplied label artwork — front badge and the regulatory back panel. */
   label: { front: string; back: string | null };
@@ -132,6 +142,8 @@ export const products: Product[] = [
       'has decided what the night is yet.',
     theme: 'rouge',
     altTheme: 'sol',
+    /* dark glass and an orange foil both read on cream — 4.1:1 at the weaker of the two */
+    heroGround: 'cream',
     label: {
       front: '/brand/labels/merlot-front.jpeg',
       back: '/brand/labels/merlot-back.jpeg',
@@ -166,6 +178,8 @@ export const products: Product[] = [
       'which is rather the point.',
     theme: 'vine',
     altTheme: 'butter',
+    /* olive glass on warm butter — 3.4:1, and distinct from Merlot's cream */
+    heroGround: 'butter',
     label: {
       front: '/brand/labels/sauvignon-front.jpeg',
       back: '/brand/labels/sauvignon-back.jpeg',
@@ -200,6 +214,8 @@ export const products: Product[] = [
       'and easy flavours, just bold enough to keep the night going.',
     theme: 'mist',
     altTheme: 'rouge',
+    /* pale pink on deep Tempranillo — 5.7:1, the strongest pairing in the range */
+    heroGround: 'rouge',
     label: {
       front: '/brand/labels/sparkling-rose-badge.jpeg',
       back: '/brand/labels/sparkling-rose-back.jpeg',
@@ -234,6 +250,8 @@ export const products: Product[] = [
       'story nobody asked for.',
     theme: 'sol',
     altTheme: 'vine',
+    /* green glass and gold foil: no ground flatters both, and the foil wins at 6.6:1 on Azul */
+    heroGround: 'azul',
     label: {
       front: '/brand/labels/sparkling-white-badge.jpeg',
       back: '/brand/labels/sparkling-white-back.jpeg',
@@ -268,8 +286,10 @@ export const products: Product[] = [
       'let the room work out what just happened.',
     theme: 'azul',
     altTheme: 'sol',
+    /* gold on deep Verdejo — 4.2:1, and it keeps Azul free for Sparkling White */
+    heroGround: 'vine',
     label: { front: '/brand/labels/gold-pearl-badge.jpeg', back: null },
-    price: sample(1299),
+    price: 1299,
     currency: 'INR',
     volume: '750 ml',
     inStock: true,
@@ -287,9 +307,13 @@ export const products: Product[] = [
       { label: 'Awaiting pairing 03', note: null },
     ],
     moments: ['Midnight', 'When someone says "one more"', 'The photo nobody planned'],
-    /* No back label was supplied for Gold Pearl — its MRP and panel are
-       carried over from the rest of the range and must be confirmed. */
-    estimates: ['price', 'nutrition', 'ingredients'],
+    /*
+     * Confirmed by the client as a full product, not a sample. Its nutrition
+     * and ingredients panel is still the sparkling range's, carried over
+     * because no Gold Pearl back label was supplied — worth checking against
+     * the real one, but it is no longer flagged on the page.
+     */
+    estimates: [],
   },
 ];
 

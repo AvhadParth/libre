@@ -4,43 +4,51 @@
   gap: var(--s-5);
 }
 
+/* The sign-off and the one ask, side by side. */
 .goodbye {
   position: relative;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--s-3);
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  align-items: end;
+  gap: var(--s-4) var(--s-5);
   padding-bottom: var(--s-4);
   border-bottom: 1px solid var(--rule);
 }
 
+.sayBye { display: grid; justify-items: start; gap: var(--s-2); }
 .bye { margin: 0; }
-.wave { display: inline-block; transform-origin: 70% 80%; animation: wave 3.4s var(--e-inout) infinite; }
-@keyframes wave {
-  0%, 62%, 100% { transform: rotate(0deg); }
-  68% { transform: rotate(16deg); }
-  74% { transform: rotate(-8deg); }
-  80% { transform: rotate(14deg); }
-  86% { transform: rotate(-4deg); }
-}
 
-.grape {
-  width: clamp(3rem, 7vw, 6rem);
+/* The supplied wave scribble, sized against the headline it belongs to and
+   drawn in Sol so it reads as a mark rather than as more type. */
+.wave {
+  width: clamp(7rem, 16vw, 13rem);
+  height: auto;
   color: var(--accent);
-  flex: 0 0 auto;
-  transform: rotate(8deg);
+  stroke-width: 5px;
+  overflow: visible;
+  animation: sway 4.2s var(--e-inout) infinite;
+  transform-origin: 0% 50%;
+}
+@keyframes sway {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  50%      { transform: translateX(0.6rem) rotate(-1.5deg); }
 }
 
-.top {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--s-4);
-}
+.mark { display: inline-block; margin-top: var(--s-2); }
+.tagline { font-size: var(--t-s); letter-spacing: 0.1em; color: var(--fg-soft); margin: 0; }
 
-.brandCol { display: grid; gap: var(--s-1); }
-.tagline { font-size: var(--t-s); letter-spacing: 0.1em; color: var(--fg-soft); }
+.signup { justify-self: stretch; align-self: end; }
+
+/* Platforms without handles are stated, not linked — see the note in the
+   component for why three links to `#` were worse than none. */
+.platform { color: var(--fg-soft); }
+
+.address {
+  font-style: normal;
+  font-size: var(--t-s);
+  line-height: 1.65;
+  color: var(--fg-soft);
+}
 
 .columns {
   display: grid;

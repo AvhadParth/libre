@@ -4,7 +4,7 @@
   min-height: 100svh;
   display: grid;
   align-items: center;
-  padding: calc(var(--nav-h) + var(--s-4)) var(--gutter) var(--s-5);
+  padding: calc(var(--nav-h) + var(--s-3)) var(--gutter) var(--s-4);
   background: var(--bg);
   color: var(--fg);
 }
@@ -23,11 +23,34 @@
   align-items: center;
 }
 
-.copy { display: grid; gap: var(--s-2); align-content: center; justify-items: start; }
-.name { margin: 0; }
+/* Tighter than the page's usual rhythm: the whole panel has to sit inside one
+   screen, and the old display--xl heading alone pushed it past the fold. */
+.copy { display: grid; gap: 0.7rem; align-content: center; justify-items: start; }
+
+.title { margin: 0; display: grid; gap: 0.25rem; justify-items: start; }
+
+.meet {
+  font-family: var(--font-text);
+  font-size: var(--t-s);
+  font-weight: 400;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+}
+
+/*
+ * Down from display--xl, which ran to about 150px and took two thirds of the
+ * viewport on its own. Big enough to be the headline, small enough that the
+ * price, the quantity and the button are all on the first screen.
+ */
+.name {
+  display: block;
+  font-size: clamp(2.2rem, 4.4vw, 3.8rem);
+  line-height: 0.98;
+}
 .name :global(.marked) > svg { color: var(--accent); }
 
-.variant { font-size: var(--t-l); color: var(--fg-soft); }
+.variant { font-size: var(--t-m); color: var(--fg-soft); }
 
 .facts {
   display: flex;
@@ -60,10 +83,38 @@
 .secondaryArrow { width: 16px; transition: transform 480ms var(--e-elastic); }
 .secondary:hover .secondaryArrow { transform: translateX(0.35em); }
 
-.stage { position: relative; height: min(74svh, 40rem); }
-.bottle { height: 100%; }
+/* As tall as the panel beside it allows. The copy column runs about 310px, so
+   the bottle can take the rest of the screen and still leave the button on it. */
+.stage { position: relative; height: min(76svh, 40rem); display: grid; place-items: center; }
+
+/*
+ * Absolutely positioned, and that is the whole point.
+ *
+ * `height: 100%` does NOT resolve against a grid area whose height comes from
+ * the parent — Chrome computes it as auto, the image sizes itself from its
+ * width alone, and object-fit then has nothing to fit. Here that made the
+ * bottle 893px tall inside a 512px stage and it ran off the bottom of the
+ * screen. Taking the box from an absolute containing block cannot fail that way.
+ */
+.bottle {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 1.2rem 2rem rgb(20 8 14 / 0.34));
+}
 
 @media (max-width: 900px) {
-  .grid { grid-template-columns: 1fr; gap: var(--s-3); }
-  .stage { height: 46svh; order: -1; }
+  /*
+   * Stacked, the bottle and the panel have to share one screen rather than sit
+   * beside each other. At 46svh the button fell below the fold on a 844px
+   * phone; 30svh keeps the whole thing — name, price, quantity, button — on the
+   * first screen, which is the point of the section.
+   */
+  .grid { grid-template-columns: 1fr; gap: var(--s-2); }
+  .stage { height: 30svh; order: -1; }
+  .hero { padding: calc(var(--nav-h) + var(--s-2)) var(--gutter) var(--s-3); }
+  .copy { gap: 0.55rem; }
+  .name { font-size: clamp(2rem, 8.5vw, 2.8rem); }
 }

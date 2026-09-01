@@ -16,7 +16,13 @@ const LINKS = [
   { href: '/world', label: 'The World' },
   { href: '/wine', label: 'The Wine' },
   { href: '/stories', label: 'The Stories' },
-  { href: '/cart', label: 'Shop' },
+  /*
+   * Shop lands on the buyable cards, not on the basket. This pointed at /cart,
+   * so "Shop" took you to your own (usually empty) cart rather than to the
+   * range — and the cart already has its own control at the end of the bar.
+   * The hash puts you past the range page's editorial opening.
+   */
+  { href: '/wine#shop', label: 'Shop' },
 ];
 
 export function Nav() {

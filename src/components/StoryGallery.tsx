@@ -35,6 +35,8 @@ export function StoryGallery() {
     const strip = row.current;
     if (!driven || !el || !strip) return;
 
+    const cleanups: Array<() => void> = [];
+
     const ctx = gsap.context(() => {
       const distance = () => Math.max(0, strip.scrollWidth - window.innerWidth + 96);
 
@@ -56,6 +58,26 @@ export function StoryGallery() {
       const MIN_PIN = () => window.innerHeight * 2.6;
       const pin = () => Math.max(distance() * PACE, MIN_PIN());
 
+      /*
+       * Held by CSS `position: sticky`, NOT by ScrollTrigger's pin.
+       *
+       * A pin wraps its element in a `.pin-spacer` div, which re-parents a node
+       * React rendered. On navigating away React then tries to remove that node
+       * from a parent it no longer has, throws
+       * "Failed to execute 'removeChild' on 'Node'", and the whole route dies —
+       * which is why every link out of this page needed a manual reload. Sticky
+       * needs no wrapper, so React's tree is never touched.
+       *
+       * The section carries the scroll distance as its own height instead of
+       * getting it from a spacer.
+       */
+      const setTrackHeight = () => {
+        el.style.height = `${Math.round(pin() + window.innerHeight)}px`;
+      };
+      setTrackHeight();
+      ScrollTrigger.addEventListener('refreshInit', setTrackHeight);
+      cleanups.push(() => ScrollTrigger.removeEventListener('refreshInit', setTrackHeight));
+
       gsap.to(strip, {
         x: () => -distance(),
         ease: 'none',
@@ -64,17 +86,7 @@ export function StoryGallery() {
           start: 'top top',
           end: () => `+=${pin()}`,
           scrub: 0.9,
-          pin: true,
           invalidateOnRefresh: true,
-          anticipatePin: 1,
-          /*
-           * This is the only pinned section on the page, and its spacer is
-           * 3,817px tall. Anything measured below it must be measured AFTER
-           * that spacing is applied, or it comes out exactly that much too
-           * high — which is what happened to the origin section further down.
-           * A higher priority refreshes this one first.
-           */
-          refreshPriority: 1,
         },
       });
 
@@ -96,16 +108,21 @@ export function StoryGallery() {
     }, el);
 
     ScrollTrigger.refresh();
-    return () => ctx.revert();
+    return () => {
+      cleanups.forEach((fn) => fn());
+      el.style.height = '';
+      ctx.revert();
+    };
   }, [driven]);
 
   return (
     <section
       ref={track}
-      className={`${styles.section} ${driven ? styles.pinned : ''}`}
+      className={`${styles.section} ${driven ? styles.track : ''}`}
       data-theme="vine"
       id="stories"
     >
+      <div className={driven ? styles.stage : undefined}>
       <header className={`shell ${styles.head}`}>
         <h2 className={`display display--m ${styles.title}`}>
           Our stories{' '}
@@ -138,6 +155,7 @@ export function StoryGallery() {
             </li>
           ))}
         </ul>
+      </div>
       </div>
     </section>
   );

@@ -379,6 +379,21 @@ src/
                         palette, motion, content-config
 ```
 
+## One rule worth keeping
+
+**Do not use ScrollTrigger's `pin` in this app — use CSS `position: sticky`.**
+
+A pin wraps its element in a `.pin-spacer` div, which re-parents a node React
+rendered. On navigating away React then tries to remove that node from a parent
+it no longer has, throws *"Failed to execute 'removeChild' on 'Node'"*, and the
+route dies — every link out of the page needs a manual reload to recover. It
+only shows up on pages that carry a pinned section, which is what made it look
+like a link problem rather than a scroll one.
+
+`StoryGallery` and `OriginStory` both hold their stage with sticky and carry the
+scroll distance as their own height. `StoryGallery` writes that height from JS
+on `refreshInit`, because it depends on how wide the strip actually is.
+
 ## Dormant components
 
 Built, tested, and **not currently rendered**. None are deleted; each is one

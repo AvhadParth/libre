@@ -3,8 +3,15 @@
   background: var(--bg);
   color: var(--fg);
   padding-block: var(--section) 0;
-  overflow: hidden;
 }
+
+/*
+ * The scroll distance, carried by the section itself. Its height is written
+ * from JS on every ScrollTrigger refresh, because it depends on how wide the
+ * strip actually is. Overflow lives on the stage, not here — `overflow: hidden`
+ * on a sticky element's ancestor is one of the two ways to break sticky.
+ */
+.track { padding-block: 0; }
 
 /*
  * Pinned, the section is exactly one viewport: heading in the first row, strip
@@ -12,7 +19,14 @@
  * and the panels — sized in svh — ran straight off the bottom of the screen,
  * taking their captions with them.
  */
-.pinned {
+/*
+ * Sticky, not pinned. See the note in the component: ScrollTrigger's pin wraps
+ * this in a spacer div and breaks React's unmount on every outbound link.
+ */
+.stage {
+  position: sticky;
+  top: 0;
+  overflow: hidden;
   height: 100svh;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
@@ -67,9 +81,9 @@
   position: relative;
   height: clamp(24rem, 62svh, 40rem);
 }
-.pinned .viewport,
-.pinned .row,
-.pinned .panel { height: 100%; }
+.stage .viewport,
+.stage .row,
+.stage .panel { height: 100%; }
 /* Landscape frames earn more width; portraits stay narrow so the strip keeps
    a rhythm rather than marching past at one pace. */
 .panel[data-span='wide'] { width: clamp(24rem, 52vw, 60rem); }

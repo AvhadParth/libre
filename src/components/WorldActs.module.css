@@ -1,0 +1,195 @@
+/*
+ * Five acts, one per verb.
+ *
+ * Each is a tall scroll track with a sticky stage inside it — sticky rather
+ * than ScrollTrigger's pin, which re-parents its element into a spacer and
+ * breaks React's unmount on navigation.
+ */
+.act {
+  position: relative;
+  height: 220svh;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+.stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  /*
+   * A poster, in three bands: the verb, then the thing it does, then the line.
+   * Stacking all three in one cell put the glass through the middle of the word
+   * POUR and the bottles across the middle of SHARE — the art and the type were
+   * fighting for the same pixels.
+   */
+  display: grid;
+  /*
+   * ONE column, explicitly. The act number and the verb were both placed in
+   * row 1 with no column, so auto-placement gave them a column each and shoved
+   * every verb off to the right of its own poster.
+   */
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  justify-items: center;
+  isolation: isolate;
+  overflow: hidden;
+  padding: calc(var(--nav-h) + var(--s-3)) var(--gutter) var(--s-4);
+  gap: var(--s-2);
+}
+
+/* Out of the flow entirely, so it cannot claim a column. */
+.index {
+  position: absolute;
+  top: calc(var(--nav-h) + var(--s-3));
+  left: var(--gutter);
+  margin: 0;
+  z-index: 2;
+  font-family: var(--font-text);
+  font-size: var(--t-xs);
+  letter-spacing: 0.3em;
+  color: var(--fg);
+  opacity: 0.55;
+}
+
+/* Chantal, and this is the one thing the page is for — so it is the page's
+   biggest type. */
+.verb {
+  grid-row: 1;
+  z-index: 2;
+  margin: 0;
+  font-size: clamp(3.2rem, 13vw, 11rem);
+  line-height: 0.86;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.line {
+  grid-row: 3;
+  z-index: 2;
+  margin: 0;
+  max-width: 24ch;
+  text-align: center;
+  font-family: var(--font-text);
+  font-size: var(--t-l);
+  line-height: 1.3;
+}
+
+/* The middle band, and only the middle band. */
+.art {
+  grid-row: 2;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  justify-self: stretch;
+}
+
+/* ------------------------------------------------------------------ pop --- */
+.piece {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(3rem, 8vw, 6.5rem);
+  height: auto;
+  color: var(--accent);
+  translate: -50% -50%;
+  will-change: transform, opacity;
+}
+.act[data-kind='pop'] .piece:nth-child(even) { color: var(--accent-2); }
+
+/* ----------------------------------------------------------------- pour --- */
+.glassWrap {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+.glassWrap svg { width: clamp(11rem, 34vh, 26rem); height: auto; }
+
+/* The empty vessel, always there. */
+/*
+ * The vessel, always fully present. It used to be a faint 16% ghost, so the
+ * reveal read as the glass being DRAWN from the bottom rather than filled.
+ * With the empty glass solid, the only thing that changes is the liquid.
+ */
+.glassGhost { color: color-mix(in oklab, var(--fg) 62%, transparent); }
+
+/* The full one, revealed from the bottom so the surface rises. */
+.glassFill {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  color: var(--fg);
+  clip-path: inset(100% 0% 0% 0%);
+}
+/* The liquid is the loud part. */
+.act[data-kind='pour'] .glassFill svg { color: var(--fg); }
+
+/* ----------------------------------------------------------------- feel --- */
+.bubble {
+  position: absolute;
+  width: clamp(9rem, 26vw, 20rem);
+  height: auto;
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+  will-change: transform, opacity;
+}
+/* Celebrate carries two things in the bottom band. */
+.act[data-kind='celebrate'] .stage { grid-template-rows: auto minmax(0, 1fr) auto auto; }
+.act[data-kind='celebrate'] .cta { grid-row: 4; }
+
+.act[data-kind='feel'] .bubble:nth-child(1) { left: 6%;  top: 18%; }
+.act[data-kind='feel'] .bubble:nth-child(2) { left: 28%; top: 54%; }
+.act[data-kind='feel'] .bubble:nth-child(3) { left: 52%; top: 12%; }
+.act[data-kind='feel'] .bubble:nth-child(4) { left: 70%; top: 58%; }
+.act[data-kind='feel'] .bubble:nth-child(5) { left: 86%; top: 28%; }
+
+/* ---------------------------------------------------------------- share --- */
+.passRow {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1rem, 5vw, 5rem);
+}
+.passed {
+  height: clamp(11rem, 42vh, 27rem);
+  width: auto;
+  flex: 0 0 auto;
+  filter: drop-shadow(0 1.2rem 2.4rem rgb(0 0 0 / 0.5));
+  will-change: transform, opacity;
+}
+
+/* ------------------------------------------------------------ celebrate --- */
+.mark { position: absolute; color: var(--accent); will-change: transform, opacity; }
+.markA { left: 6%;  top: 20%; width: clamp(10rem, 30vw, 24rem); }
+.markB { right: 8%; top: 14%; width: clamp(5rem, 14vw, 11rem); color: var(--accent-2); }
+.markC { left: 50%; top: 56%; translate: -50% 0; width: clamp(13rem, 38vw, 30rem); }
+
+.cta { grid-row: 3; z-index: 3; justify-self: center; margin-top: var(--s-2); }
+
+/* ---------------------------------------------------------------- narrow --- */
+@media (max-width: 760px) {
+  .act { height: 200svh; }
+  .verb { font-size: clamp(3.2rem, 22vw, 7rem); }
+  .line { font-size: var(--t-m); max-width: 20ch; }
+  .passRow { gap: 1rem; }
+  .passed { height: clamp(7rem, 26vh, 12rem); }
+  .cta { margin-bottom: var(--s-5); }
+}
+
+/*
+ * Reduced motion gets the finished frame of each act, not the journey: the
+ * track collapses to one screen and everything is already in place.
+ */
+.act[data-static='true'] { height: auto; }
+.act[data-static='true'] .stage { position: relative; height: auto; min-height: 100svh; }
+.act[data-static='true'] .glassFill { clip-path: inset(6% 0% 0% 0%); }
+
+/* Hidden only while the script is driving them. */
+.act[data-animated='true'] .piece,
+.act[data-animated='true'] .bubble,
+.act[data-animated='true'] .passed,
+.act[data-animated='true'] .mark { opacity: 0; }

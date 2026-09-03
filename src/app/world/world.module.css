@@ -1,166 +1,93 @@
+/*
+ * The opening and the closing line. Everything between them is WorldActs.
+ *
+ * The rules list, the how-to steps, the pillars and the provenance block that
+ * used to live here are gone — see the note in page.tsx for which page already
+ * carries each of them.
+ */
 .hero {
   position: relative;
   overflow: hidden;
-  min-height: 92svh;
+  min-height: 100svh;
   display: grid;
-  align-items: end;
-  padding: calc(var(--nav-h) + var(--s-5)) var(--gutter) var(--s-5);
+  align-items: center;
+  padding: calc(var(--nav-h) + var(--s-5)) var(--gutter) var(--s-6);
 }
-.heroDots { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--fg); opacity: 0.09; }
-.heroInner { position: relative; display: grid; gap: var(--s-3); justify-items: start; }
-.title { margin: 0; }
-.accent { color: var(--accent); }
 
-/* ------------------------------------------------------------- the rules --- */
-.rules { display: grid; gap: var(--s-4); }
-.rulesHead {
-  display: flex; flex-wrap: wrap;
-  align-items: flex-end; justify-content: space-between;
-  gap: var(--s-3);
-}
-.rulesTitle { margin: 0; }
-.rulesTitle :global(.marked) > svg { color: var(--accent); }
-
-.ruleList { display: grid; }
-.rule { border-bottom: 1px solid var(--rule); }
-.ruleRow {
-  display: grid;
-  grid-template-columns: 3.5rem 1fr;
-  gap: var(--s-2);
-  align-items: baseline;
-  padding-block: clamp(0.9rem, 2.2vw, 1.7rem);
-}
-.ruleNo { font-size: var(--t-xs); letter-spacing: 0.2em; color: var(--fg-faint); }
-.ruleText {
-  position: relative;
-  display: inline-block;
-  font-family: var(--font-display);
-  font-size: var(--d-s);
-  line-height: 1.05;
-  letter-spacing: -0.015em;
-  color: var(--fg-soft);
-  transition: color 420ms var(--e-out);
-}
-.ruleStrike path { stroke-width: 0.05em; }
-.ruleStrike {
+.heroDots {
   position: absolute;
-  left: -3%; top: 38%;
-  width: 106%; height: 0.5em;
-  color: var(--accent);
-  overflow: visible;
-  clip-path: inset(0 100% 0 0);
-  transition: clip-path 780ms var(--e-out);
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  color: var(--fg);
+  opacity: 0.07;
 }
-.rule:hover .ruleText { color: var(--fg); }
-.rule:hover .ruleStrike { clip-path: inset(0 0 0 0); }
 
-/* --------------------------------------------------------------- how to --- */
-.how { display: grid; gap: var(--s-4); }
-.howHead { display: grid; gap: var(--s-2); }
-.howHead h2 { margin: 0; }
-
-.steps {
+.heroInner {
+  position: relative;
+  z-index: 1;
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: var(--gutter);
-}
-.step[data-i='1'] { transform: translateY(clamp(0.8rem, 2.6vw, 2.4rem)); }
-.step[data-i='3'] { transform: translateY(clamp(0.5rem, 1.8vw, 1.6rem)); }
-.stepInner { display: grid; gap: 0.6rem; justify-items: start; }
-.stepGrape { width: clamp(1.4rem, 2.4vw, 2.2rem); color: var(--accent); }
-.stepVerb { margin: 0; }
-
-/* -------------------------------------------------------------- pillars --- */
-.pillars { padding-block: var(--section); }
-.pillarGrid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
-  gap: var(--gutter);
-  align-items: center;
-}
-.pillarCopy { display: grid; gap: var(--s-2); align-content: center; }
-.pillarCopy h2 { margin: 0; }
-.pillarArt { position: relative; }
-.pillarArtSmall {
-  position: absolute; right: -10%; bottom: -12%; width: 46%;
-  box-shadow: 0 20px 60px color-mix(in oklab, var(--rouge) 20%, transparent);
-}
-
-@media (max-width: 1000px) {
-  .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .step { transform: none !important; }
-  .pillarGrid { grid-template-columns: 1fr; }
-  .pillarArt { max-width: 26rem; }
-}
-@media (max-width: 560px) {
-  .steps { grid-template-columns: 1fr; }
-  /* The small frame deliberately overhangs its parent on a wide screen. At
-     350px that hangs it 35px off the side of the phone. */
-  .pillarArtSmall { right: 0; bottom: -6%; width: 40%; }
-  .ruleRow { grid-template-columns: 2.4rem 1fr; }
-}
-
-/* ---------------------------------------------------------- provenance --- */
-.origin { padding-block: var(--section); }
-
-.originGrid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-  gap: clamp(2rem, 6vw, 6rem);
-  align-items: center;
-}
-
-.originCopy { display: grid; gap: var(--s-3); align-content: start; }
-
-.originFacts {
-  display: grid;
-  gap: 0;
-  margin-top: var(--s-2);
-  border-top: 1px solid var(--rule);
-}
-.originFact {
-  display: grid;
-  grid-template-columns: minmax(8rem, 12rem) minmax(0, 1fr);
   gap: var(--s-3);
-  padding-block: 0.85rem;
-  border-bottom: 1px solid var(--rule);
+  justify-items: start;
 }
-.originFact dt {
+
+.heroTitle { margin: 0; max-width: 13ch; }
+.heroTitle :global(.marked) > svg { color: var(--accent); }
+.heroLede { max-width: 34ch; }
+
+/* ------------------------------------------------------------- contents --- */
+/*
+ * The five acts listed as a contents page, so the shape of what follows is
+ * clear before you start scrolling through it.
+ */
+.contents {
+  display: grid;
+  gap: 0.35rem;
+  margin: var(--s-3) 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--rule);
+  padding-top: var(--s-3);
+  width: min(100%, 26rem);
+}
+.contents li {
+  display: grid;
+  grid-template-columns: 3rem auto;
+  align-items: baseline;
+  gap: var(--s-2);
+}
+.contentsNo {
+  font-family: var(--font-text);
   font-size: var(--t-xs);
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
+  letter-spacing: 0.24em;
   color: var(--fg-faint);
 }
-.originFact dd { margin: 0; font-size: var(--t-s); color: var(--fg-soft); }
-
-.originMap { margin: 0; display: grid; gap: var(--s-2); }
-.originMap img {
-  width: 100%;
-  height: auto;
-  border-radius: 1.25rem;
-  /* The supplied sheet is on white; the cream ground would otherwise show a
-     hard rectangle behind it. */
-  mix-blend-mode: multiply;
-}
-.originMap figcaption { color: var(--fg-faint); letter-spacing: 0.14em; text-transform: uppercase; font-size: var(--t-xs); }
-
-@media (max-width: 900px) {
-  .originGrid { grid-template-columns: minmax(0, 1fr); }
-  .originFact { grid-template-columns: minmax(0, 1fr); gap: 0.25rem; }
+.contentsVerb {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.3rem, 3vw, 2rem);
+  line-height: 1.1;
+  text-transform: uppercase;
 }
 
+/* ----------------------------------------------------------------- coda --- */
+.coda { padding-block: var(--section); }
+.codaInner {
+  display: grid;
+  gap: var(--s-2);
+  justify-items: center;
+  text-align: center;
+}
+.codaLine {
+  margin: 0;
+  max-width: 44ch;
+  font-family: var(--font-text);
+  font-size: var(--t-m);
+  color: var(--fg-soft);
+}
 
-/*
- * The region sheet is a raster with its caption baked into the artwork, so its
- * text cannot reflow — at 390px the bullet list is far too small to read. Give
- * it a legible minimum and let the figure pan instead of shrinking it further.
- */
-@media (max-width: 720px) {
-  .originMap {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior-x: contain;
-  }
-  .originMap img { min-width: 34rem; max-width: none; }
-  .originMap figcaption { position: sticky; left: 0; }
+@media (max-width: 760px) {
+  .hero { padding-block: calc(var(--nav-h) + var(--s-4)) var(--s-5); }
+  .heroTitle { max-width: 11ch; }
+  .contents li { grid-template-columns: 2.4rem auto; }
 }

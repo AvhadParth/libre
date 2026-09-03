@@ -365,7 +365,16 @@ The experiment never costs anyone the content.
 **`/wine/[slug]`** — `ProductHero` (buy panel, one screen), marquee,
 `WhatsInside`, and a short sideways row. Deliberately four sections, ~4,500px.
 
-**`/world`, `/stories`** — still carry `Scrapbook` and its shot briefs.
+**`/world`** — the five verbs, one act each: POP → POUR → FEEL → SHARE →
+CELEBRATE, on Sol, Rouge, Mist, Vine and Azul. Five of its eight old sections
+said what the homepage already says (the struck-through rules against the story
+section, the Extremadura block against the origin section) and are gone;
+provenance keeps one line pointing home. The verbs live in `lib/world-acts.ts`
+rather than in the client component, because a value imported from a
+`'use client'` module into a server component arrives as a client reference and
+fails at prerender.
+
+**`/stories`** — still carries `Scrapbook` and its shot briefs.
 
 ```
 src/

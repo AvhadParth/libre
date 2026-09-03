@@ -184,7 +184,7 @@ export function OriginStory() {
   }, []);
 
   return (
-    <section ref={root} className={styles.section} data-theme="azul" aria-labelledby="origin-heading">
+    <section id="origin" ref={root} className={styles.section} data-theme="azul" aria-labelledby="origin-heading">
       <div className={styles.stage} data-stage>
         {/* Atmosphere. Held well back so it never competes with the map. */}
         <img

@@ -146,6 +146,7 @@ serves the source PNGs; every use is a WebP derivative generated from them:
 | Set | Used by | Size |
 |---|---|---|
 | `cards/{slug}-studio.webp` · `cards/{slug}-cutout.webp` | shop cards, product heroes, "or maybe one of these" | 533 KB for all ten, from 12.2 MB of PNG |
+| `wall/*.webp` | the eighteen frames on `/stories` | 1.16 MB for all eighteen, from 31.3 MB of PNG |
 | `shelf/{slug}.webp` | the range shelf, the cart drawer and `/cart` line items | ~65 KB each |
 | `marquee/{slug}.webp` | the brand band | ~65 KB each |
 | `vineyard.webp` | the origin section's ground | 88 KB, from 2.3 MB |
@@ -374,7 +375,13 @@ rather than in the client component, because a value imported from a
 `'use client'` module into a server component arrives as a client reference and
 fails at prerender.
 
-**`/stories`** — still carries `Scrapbook` and its shot briefs.
+**`/stories`** — one wall and nothing else: eighteen framed photographs hung
+salon-style on a twelve-column dense grid, each declaring how much wall it is
+worth so the packing comes out irregular without hand-placing anything. The
+gallery label carries the h1. Click a frame to enlarge — a native `<dialog>`,
+so the focus trap, Escape and page inertness come from the platform. Its hero,
+the homepage's story strip, the shot-brief wall, the scrapbook and the chaos
+button are all gone; the page dropped from 159 kB to 104 kB first load.
 
 ```
 src/
@@ -416,6 +423,8 @@ line away from returning.
 | `ProductBottle` | product heroes use photography; only four of five products have a `.glb`, so Gold Pearl's page had no bottle at all |
 | `ProductCard` | the product page's sideways row is a compact photographic row now |
 | `HeroPour` | the homepage opens on `HeroLineup` |
+| `Scrapbook` | its collage was shot briefs, not photographs; both pages that carried it now show real work |
+| `ChaosButton` | `/stories` was its last home |
 
 `FlavourProfile` and `PairingSection` return the moment their data is approved.
 

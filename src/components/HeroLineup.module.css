@@ -86,7 +86,12 @@
   will-change: transform, opacity;
 }
 
-.cardName { margin: 0; line-height: 0.9; }
+/*
+ * Uppercased so Chantal renders the whole word. It has a full set of capitals
+ * but only a partial lowercase — no lowercase e-acute — so "Rosé" set as
+ * authored drops its accent into a fallback face mid-word.
+ */
+.cardName { margin: 0; line-height: 0.9; text-transform: uppercase; }
 .cardVariant {
   font-size: var(--t-s);
   letter-spacing: 0.18em;

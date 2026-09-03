@@ -19,8 +19,15 @@ export const hasWebGL = () => {
   }
 };
 
-/** The line-up, in the order the hero walks through it. */
-export const LINEUP: readonly BottleId[] = ['merlot', 'sauvignon', 'rose', 'sparkling'];
+/**
+ * The line-up, in the order the hero walks through it.
+ *
+ * This is the ONLY place the order is written. HeroLineup builds its cards and
+ * its colour journey from this array, so the models on screen and the copy
+ * beside them cannot fall out of step — they previously sat in two separate
+ * lists that happened to agree.
+ */
+export const LINEUP: readonly BottleId[] = ['sparkling', 'rose', 'sauvignon', 'merlot'];
 
 /*
  * One bottle on screen at a time.

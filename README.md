@@ -254,8 +254,9 @@ unreadable. The travel between colours is designed instead: the liquid wipe, the
 dot fields, the curved leading edge of a page transition.
 
 ```
-Cava Cream → Tempranillo Rouge → Cream → Sol Yellow → Cream
-           → Cream (the shop) → Azul (the origin) → Cream
+Sol Yellow → Airén Mist → Verdejo Vine → Tempranillo Rouge   (the line-up)
+           → Cream → Sol Yellow → Cream → Cream (the shop)
+           → Azul (the origin) → Cream
 ```
 
 Every pairing in the palette scores **≥ 9:1** contrast.

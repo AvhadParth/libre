@@ -26,13 +26,22 @@ import styles from './HeroLineup.module.css';
  * that wine, so the hero cannot drift out of step with the product pages.
  */
 
-/** Each model, paired with the product it actually is. */
-const SLOTS: { id: BottleId; slug: string; theme: ThemeName }[] = [
-  { id: 'merlot', slug: 'merlot-red', theme: 'rouge' },
-  { id: 'sauvignon', slug: 'sauvignon-blanc-white', theme: 'vine' },
-  { id: 'rose', slug: 'sparkling-rose', theme: 'mist' },
-  { id: 'sparkling', slug: 'sparkling-white', theme: 'sol' },
-];
+/**
+ * What each model is, as a product. Keyed, not ordered — the order comes from
+ * LINEUP, which the scene also renders from, so the bottle on screen and the
+ * card beside it are always the same wine.
+ */
+const SLOT_BY_ID: Record<BottleId, { slug: string; theme: ThemeName }> = {
+  merlot: { slug: 'merlot-red', theme: 'rouge' },
+  sauvignon: { slug: 'sauvignon-blanc-white', theme: 'vine' },
+  rose: { slug: 'sparkling-rose', theme: 'mist' },
+  sparkling: { slug: 'sparkling-white', theme: 'sol' },
+};
+
+const SLOTS: { id: BottleId; slug: string; theme: ThemeName }[] = LINEUP.map((id) => ({
+  id,
+  ...SLOT_BY_ID[id],
+}));
 
 /*
  * Scroll shape.

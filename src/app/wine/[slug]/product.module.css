@@ -12,10 +12,20 @@
 /* A sideways glance, not a second catalogue. */
 .moreRow {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+  /*
+   * Explicit counts, and tracks that may shrink to nothing.
+   * `repeat(auto-fit, minmax(min(100%, 11rem), 1fr))` let a track take its
+   * items' min-content instead, which pushed the row 6px past the screen on a
+   * phone and gave one enormous card per row.
+   */
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: clamp(1rem, 2vw, 1.75rem);
   align-items: start;
 }
+.otherLink { min-width: 0; }
+.otherName { overflow-wrap: anywhere; }
+
+@media (max-width: 900px) { .moreRow { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
 .otherLink {
   display: grid;

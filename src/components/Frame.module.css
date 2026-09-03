@@ -47,3 +47,13 @@
   text-transform: uppercase;
   opacity: 0.6;
 }
+
+
+/*
+ * Flat on a phone. The tilt is set inline per frame, and a rotated box is wider
+ * than the element inside it — at 390px that pushed frames past the screen edge
+ * and made the collages overlap each other.
+ */
+@media (max-width: 720px) {
+  .frame { rotate: 0deg !important; }
+}

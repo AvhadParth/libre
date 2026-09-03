@@ -94,6 +94,9 @@
 }
 @media (max-width: 560px) {
   .steps { grid-template-columns: 1fr; }
+  /* The small frame deliberately overhangs its parent on a wide screen. At
+     350px that hangs it 35px off the side of the phone. */
+  .pillarArtSmall { right: 0; bottom: -6%; width: 40%; }
   .ruleRow { grid-template-columns: 2.4rem 1fr; }
 }
 
@@ -144,4 +147,20 @@
 @media (max-width: 900px) {
   .originGrid { grid-template-columns: minmax(0, 1fr); }
   .originFact { grid-template-columns: minmax(0, 1fr); gap: 0.25rem; }
+}
+
+
+/*
+ * The region sheet is a raster with its caption baked into the artwork, so its
+ * text cannot reflow — at 390px the bullet list is far too small to read. Give
+ * it a legible minimum and let the figure pan instead of shrinking it further.
+ */
+@media (max-width: 720px) {
+  .originMap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+  .originMap img { min-width: 34rem; max-width: none; }
+  .originMap figcaption { position: sticky; left: 0; }
 }

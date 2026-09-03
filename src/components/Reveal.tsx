@@ -53,13 +53,20 @@ export function Reveal({
               : [el])
           : [el];
 
+      /*
+       * The slide's resting offset has to fit the screen it starts on. At -48px
+       * on a 390px phone the element begins outside the viewport, which widens
+       * the document until it reveals.
+       */
+      const slideFrom = Math.min(48, Math.round(window.innerWidth * 0.05));
+
       const from: gsap.TweenVars =
         variant === 'mask'
           ? { clipPath: 'inset(0% 0% 100% 0%)', y: 40 }
           : variant === 'scale'
             ? { opacity: 0, scale: 1.08, filter: 'blur(6px)' }
             : variant === 'slide'
-              ? { opacity: 0, x: -48 }
+              ? { opacity: 0, x: -slideFrom }
               : { opacity: 0, y: 44 };
 
       const to: gsap.TweenVars =

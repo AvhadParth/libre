@@ -62,3 +62,23 @@
   .block { grid-column: 1 / span 4; grid-row: 13 / span 2; }
   .grapeA { left: 60%; top: 26%; }
 }
+
+
+/*
+ * Below 560px a twelve-column collage has nothing to work with — the columns
+ * are ~45px, the pieces stop reading as a wall, and the tightest one still
+ * poked past the screen edge. One column, in order, with the decorative
+ * offsets dropped.
+ */
+@media (max-width: 560px) {
+  .board { grid-template-columns: minmax(0, 1fr); grid-auto-rows: auto; gap: var(--s-3); }
+  .headline,
+  .piece[data-area='a'],
+  .piece[data-area='b'],
+  .piece[data-area='c'],
+  .piece[data-area='d'],
+  .piece[data-area='e'],
+  .block { grid-column: 1 / -1; grid-row: auto; }
+  .block { display: none; }
+  .grapeA, .grapeB { display: none; }
+}

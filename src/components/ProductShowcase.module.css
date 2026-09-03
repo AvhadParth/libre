@@ -129,6 +129,10 @@
 
 @media (max-width: 900px) {
   .row {
+    /* The glow is a soft pool wider than the bottle it sits under, so the one
+       at each end spills past the screen. Clip on the x axis only — `clip`
+       keeps the y axis visible, so the active bottle can still rise. */
+    overflow-x: clip;
     gap: clamp(0.25rem, 1.5vw, 1rem);
     min-height: clamp(12rem, 46vw, 20rem);
   }

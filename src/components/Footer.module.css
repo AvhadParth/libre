@@ -4,7 +4,13 @@
   gap: var(--s-5);
 }
 
-/* The sign-off and the one ask, side by side. */
+/*
+ * The sign-off and the one ask, side by side — but only where there is room.
+ * See the stacking rule at the bottom of this file: at 390px the two columns
+ * squeezed the newsletter into 136px while its submit button has a 182px
+ * min-content width, which pushed the whole document 27px wider than the
+ * screen on every page of the site.
+ */
 .goodbye {
   position: relative;
   display: grid;
@@ -101,4 +107,16 @@
 }
 @media (max-width: 520px) {
   .columns { grid-template-columns: 1fr; }
+}
+
+
+/* --------------------------------------------------------------- narrow --- */
+@media (max-width: 720px) {
+  /* One column. The newsletter cannot be squeezed: its button does not wrap. */
+  .goodbye {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s-3);
+  }
+  .signup { justify-self: stretch; width: 100%; }
+  .wave { width: clamp(6rem, 34vw, 9rem); }
 }

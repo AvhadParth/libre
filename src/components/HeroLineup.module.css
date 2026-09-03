@@ -148,6 +148,26 @@
     width: auto;
     bottom: clamp(4.5rem, 14vh, 8rem);
   }
+  /*
+   * Stacked, the copy sits directly over the bottle instead of beside it, and
+   * the name and its eyebrow were reading across dark glass and a lit label at
+   * once. A wash of the section's own ground — which is repainted per frame in
+   * OKLab, so this follows the colour journey — puts them back on a flat base.
+   */
+  .cards::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset: -2.5rem calc(var(--gutter) * -1) calc(clamp(4.5rem, 14vh, 8rem) * -1);
+    background: linear-gradient(
+      to top,
+      var(--bg) 0%,
+      var(--bg) 46%,
+      color-mix(in oklab, var(--bg) 72%, transparent) 74%,
+      transparent 100%
+    );
+    pointer-events: none;
+  }
   .cue { display: none; }
   .wordmarkArt { width: min(84vw, 34rem); }
   .backType { align-items: start; padding-top: calc(var(--nav-h) + 7svh); }

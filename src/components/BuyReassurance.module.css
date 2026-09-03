@@ -1,0 +1,36 @@
+/* Sits directly under the button, in the same column as the price. */
+.list {
+  display: grid;
+  gap: 0.45rem;
+  margin: var(--s-2) 0 0;
+  padding-top: var(--s-2);
+  border-top: 1px solid color-mix(in oklab, var(--fg) 18%, transparent);
+  max-width: 34rem;
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 7rem minmax(0, 1fr);
+  gap: 0.9rem;
+  align-items: baseline;
+}
+
+.key {
+  font-family: var(--font-text);
+  font-size: var(--t-xs);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--fg) 68%, var(--bg));
+}
+
+.value {
+  margin: 0;
+  font-family: var(--font-text);
+  font-size: var(--t-s);
+  line-height: 1.45;
+  color: var(--fg);
+}
+
+@media (max-width: 560px) {
+  .item { grid-template-columns: 5.6rem minmax(0, 1fr); gap: 0.6rem; }
+}

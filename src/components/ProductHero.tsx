@@ -2,6 +2,7 @@
 
 import { formatPrice, type Product } from '@/lib/products';
 import { AddToCart } from './AddToCart';
+import { BuyReassurance } from './BuyReassurance';
 import { Pending, SampleTag } from './Pending';
 import { Arrow, Dots, Scribble } from './brand/Marks';
 import { scrollTo } from './SmoothScroll';
@@ -68,7 +69,11 @@ export function ProductHero({ product }: { product: Product }) {
             </div>
           </dl>
 
-          <AddToCart product={product} />
+          <div data-buybox>
+            <AddToCart product={product} />
+          </div>
+
+          <BuyReassurance product={product} />
 
           <button
             type="button"

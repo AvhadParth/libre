@@ -1,0 +1,129 @@
+/*
+ * Off the bottom until the hero's own button leaves, then in.
+ *
+ * `visibility` as well as translate, so it is not a focus trap sitting under
+ * the page — and the controls carry tabIndex -1 while hidden for the same
+ * reason. Nothing here is a second call to action competing with the first;
+ * it only exists once the first is gone.
+ */
+.bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /* Above the sound toggle (110), which is fixed in the same bottom-left
+     corner — the bar is the more important thing while it is up, and the
+     toggle comes back the moment you scroll to the buy panel again. */
+  z-index: 115;
+  translate: 0 110%;
+  visibility: hidden;
+  background: color-mix(in oklab, var(--cream) 94%, transparent);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid color-mix(in oklab, var(--rouge) 16%, transparent);
+  box-shadow: 0 -0.6rem 2rem rgb(69 19 38 / 0.10);
+  transition: translate 460ms var(--e-out), visibility 0s linear 460ms;
+}
+.bar[data-shown] {
+  translate: 0 0;
+  visibility: visible;
+  transition: translate 460ms var(--e-out), visibility 0s;
+}
+
+.inner {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto auto;
+  align-items: center;
+  gap: clamp(0.6rem, 1.6vw, 1.4rem);
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding: 0.7rem var(--gutter);
+  color: var(--rouge);
+}
+
+.thumb { height: 3rem; width: auto; }
+
+.what { min-width: 0; display: grid; gap: 0.1rem; }
+.name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.15rem;
+  line-height: 1;
+}
+.meta {
+  margin: 0;
+  font-family: var(--font-text);
+  font-size: var(--t-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--rouge) 70%, var(--cream));
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.price {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.3rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.qty {
+  display: grid;
+  grid-template-columns: 1.5rem 1.6rem 1.5rem;
+  align-items: center;
+  justify-items: center;
+  height: 2.5rem;
+  border: 1px solid color-mix(in oklab, var(--rouge) 26%, transparent);
+  border-radius: var(--radius-soft);
+  font-family: var(--font-text);
+  font-size: var(--t-s);
+}
+.qty button { width: 100%; height: 100%; color: var(--rouge); font-size: 1rem; line-height: 1; border-radius: 50%; }
+.qty button:hover { background: color-mix(in oklab, var(--rouge) 10%, transparent); }
+.qty button:focus-visible { outline: 2px solid var(--rouge); outline-offset: -2px; }
+
+.add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-width: 0;
+  height: 2.5rem;
+  padding-inline: 1.1rem;
+  background: var(--rouge);
+  color: var(--cream);
+  border: 0;
+  border-radius: var(--radius-soft);
+  font-family: var(--font-text);
+  font-size: var(--t-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 280ms var(--e-out);
+}
+.add:hover { background: color-mix(in oklab, var(--rouge) 84%, #000); }
+.add:focus-visible { outline: 2px solid var(--rouge); outline-offset: 3px; }
+.add:disabled { opacity: 0.5; cursor: not-allowed; }
+.addArrow { width: 0.85em; height: auto; }
+
+@media (max-width: 720px) {
+  /*
+   * Two deliberate rows: what and how much on the first, a full-width button on
+   * the second. The button wrapping was already happening from auto-flow; this
+   * makes it intentional and gives the tap target the whole width.
+   */
+  .inner { grid-template-columns: minmax(0, 1fr) auto auto; padding-inline: var(--s-2); }
+  .add { grid-column: 1 / -1; }
+  .thumb, .meta { display: none; }
+  .price { font-size: 1.1rem; }
+  .add { padding-inline: 0.85rem; letter-spacing: 0.06em; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar { transition: none; }
+}

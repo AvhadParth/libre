@@ -1,3 +1,4 @@
+import { SITE_URL } from '@/lib/site';
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { CartProvider } from '@/lib/cart';
@@ -11,7 +12,7 @@ import { PageTransition } from '@/components/PageTransition';
 import { SoundToggle } from '@/components/SoundToggle';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://olelibre.example'),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: 'LIBRE — Wine without the rules',
     template: '%s — LIBRE',

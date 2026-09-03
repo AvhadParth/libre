@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getProduct, products } from '@/lib/products';
+import { getProduct, products, ORIGIN, type Product } from '@/lib/products';
+import { SITE_URL } from '@/lib/site';
 import { ProductHero } from '@/components/ProductHero';
+import { StickyBuy } from '@/components/StickyBuy';
 import { WhatsInside } from '@/components/WhatsInside';
 import { Themed } from '@/components/Themed';
 import { Reveal } from '@/components/Reveal';
@@ -28,6 +30,48 @@ export async function generateMetadata({
   };
 }
 
+/**
+ * schema.org/Product for this bottle.
+ *
+ * Every value is read from the catalogue: name, description, the real images,
+ * the volume, the stock flag and the price. Nothing is asserted that is not
+ * already on the page — no ratings, no review counts, no delivery window. An
+ * offer is only emitted when the price is approved.
+ */
+function productSchema(product: Product) {
+  const url = `${SITE_URL}/wine/${product.slug}`;
+  const priced = product.price !== null && !product.estimates.includes('price');
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: `LIBRE ${product.name}`,
+    description: `${product.personality} ${product.blurb}`,
+    sku: product.slug,
+    image: [
+      `${SITE_URL}/photography/cards/${product.slug}-studio.webp`,
+      `${SITE_URL}/photography/cards/${product.slug}-cutout.webp`,
+    ],
+    brand: { '@type': 'Brand', name: 'LIBRE' },
+    ...(product.volume ? { size: product.volume } : {}),
+    countryOfOrigin: ORIGIN.country,
+    url,
+    ...(priced
+      ? {
+          offers: {
+            '@type': 'Offer',
+            url,
+            price: product.price,
+            priceCurrency: product.currency,
+            availability: product.inStock
+              ? 'https://schema.org/InStock'
+              : 'https://schema.org/OutOfStock',
+          },
+        }
+      : {}),
+  };
+}
+
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const product = getProduct(slug);
@@ -37,7 +81,20 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
   return (
     <>
+      {/*
+        Structured data, built only from what the catalogue actually holds. The
+        offer is omitted entirely when a price is not approved, rather than
+        published as a guess — a wrong price in a search result is worse than
+        no price at all.
+      */}
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema(product)) }}
+      />
+
       <ProductHero product={product} />
+      <StickyBuy product={product} watch="[data-buybox]" />
 
       <Marquee
         items={[product.personality, 'No occasion required', 'Wine without the rules']}

@@ -48,9 +48,9 @@ export function Footer() {
       <div className={styles.goodbye}>
         <div className={styles.sayBye}>
           <h2 className={`display display--xl ${styles.bye}`}>
-            Okay.
+            Let’s
             <br />
-            Bye.
+            Party.
           </h2>
           {/*
             The brand's own wave, not the system emoji that stood here. A `👋`

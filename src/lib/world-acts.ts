@@ -15,12 +15,18 @@ export const ACTS: {
   verb: string;
   line: string;
   theme: ThemeName;
+  /**
+   * Footage for this act. All five have it now — Share was the last to be
+   * shot, so it no longer falls back to the Verdejo ground and the passing
+   * bottles. An act with no video still degrades to that.
+   */
+  video?: string;
 }[] = [
-  { kind: 'pop', verb: 'Pop', line: 'The sound that starts the evening.', theme: 'sol' },
-  { kind: 'pour', verb: 'Pour', line: 'Generously. It is not a tasting.', theme: 'rouge' },
-  { kind: 'feel', verb: 'Feel', line: 'Whatever the room is doing.', theme: 'mist' },
-  { kind: 'share', verb: 'Share', line: 'The bottle, the table, the story.', theme: 'vine' },
-  { kind: 'celebrate', verb: 'Celebrate', line: 'Or don’t. Tuesday counts.', theme: 'azul' },
+  { kind: 'pop', verb: 'Pop', line: 'The sound that starts the evening.', theme: 'sol', video: 'pop' },
+  { kind: 'pour', verb: 'Pour', line: 'Generously. It is not a tasting.', theme: 'rouge', video: 'pour' },
+  { kind: 'feel', verb: 'Feel', line: 'Whatever the room is doing.', theme: 'mist', video: 'feel' },
+  { kind: 'share', verb: 'Share', line: 'The bottle, the table, the story.', theme: 'vine', video: 'share' },
+  { kind: 'celebrate', verb: 'Celebrate', line: 'Or don’t. Tuesday counts.', theme: 'azul', video: 'celebrate' },
 ];
 
 /** The same five as a contents list for the page's opening. */

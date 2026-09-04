@@ -36,6 +36,8 @@
   transition: opacity 460ms var(--e-out);
 }
 .nav[data-scrolled='true']::before { opacity: 1; }
+/* Over film the bar carries no plate at all — just white marks on the picture. */
+.nav[data-clear='true']::before { opacity: 0; }
 
 .nav[data-scrolled='true'] .brand { transform: scale(0.9); }
 

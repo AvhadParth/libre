@@ -52,20 +52,72 @@
   opacity: 0.55;
 }
 
+/*
+ * On a film act the words sit dead centre, over the footage — nothing else is
+ * competing for the frame. On the act with no film (Share) the old three-band
+ * poster still applies, because the bottles need the middle.
+ */
+.copy {
+  grid-row: 1;
+  display: grid;
+  justify-items: center;
+  gap: var(--s-2);
+  z-index: 2;
+}
+.act[data-film] .stage {
+  place-items: center;
+  /* Symmetric, unlike the poster layout: the act number is absolute, so the
+     nav-height top padding was only pushing the centred block 30px low. */
+  padding-block: var(--s-4);
+}
+.act[data-film] .copy {
+  grid-row: 1 / -1;
+  align-content: center;
+}
+
 /* Chantal, and this is the one thing the page is for — so it is the page's
    biggest type. */
 .verb {
-  grid-row: 1;
   z-index: 2;
   margin: 0;
-  font-size: clamp(3.2rem, 13vw, 11rem);
+  /*
+   * Capped by what the frame can actually hold, not just by the viewport.
+   *
+   * CELEBRATE is nine characters, and at 22vw it ran off both edges of a 390px
+   * screen — invisibly, because the stage clips its overflow. Chantal's caps
+   * average about 0.48em of advance, so width / characters / 0.48 is the size
+   * that exactly fills the line; 1.82 keeps it inside the gutter. --verb-len comes
+   * from the act, so the short verbs keep their full size.
+   */
+  --verb-size: clamp(3.2rem, 13vw, 11rem);
+  font-size: min(
+    var(--verb-size),
+    calc((100vw - 2 * var(--gutter)) / var(--verb-len, 6) * 1.82)
+  );
   line-height: 0.86;
   text-transform: uppercase;
   text-align: center;
 }
 
+/*
+ * Over footage the type is ALWAYS cream, never the act's own ink.
+ *
+ * Mist and Sol both set a dark rouge foreground, which is right on their flat
+ * grounds and wrong on a bright film — FEEL came out maroon on a lit glass and
+ * could not be read. The scrim beneath is a neutral dark, so one ink works for
+ * all five and the shadow holds the glyph edges where the footage is busiest.
+ */
+/* All five, not only the ones running film — Share reads white on Verdejo too,
+   and one ink across the set is what makes it read as one sequence. */
+.act .verb,
+.act .line,
+.act .index {
+  color: var(--cream);
+}
+.act[data-film] .verb { text-shadow: 0 0.04em 0.5em rgb(10 6 4 / 0.5); }
+.act[data-film] .line { text-shadow: 0 0.05em 0.6em rgb(10 6 4 / 0.6); }
+
 .line {
-  grid-row: 3;
   z-index: 2;
   margin: 0;
   max-width: 24ch;
@@ -74,6 +126,12 @@
   font-size: var(--t-l);
   line-height: 1.3;
 }
+
+/*
+ * The graphic only belongs to an act with no footage. Confetti and bubbles over
+ * film is noise on top of noise — Share is the one that still needs it.
+ */
+.art[data-has-film] { display: none; }
 
 /* The middle band, and only the middle band. */
 .art {
@@ -135,9 +193,6 @@
   mix-blend-mode: multiply;
   will-change: transform, opacity;
 }
-/* Celebrate carries two things in the bottom band. */
-.act[data-kind='celebrate'] .stage { grid-template-rows: auto minmax(0, 1fr) auto auto; }
-.act[data-kind='celebrate'] .cta { grid-row: 4; }
 
 .act[data-kind='feel'] .bubble:nth-child(1) { left: 6%;  top: 18%; }
 .act[data-kind='feel'] .bubble:nth-child(2) { left: 28%; top: 54%; }
@@ -168,16 +223,59 @@
 .markB { right: 8%; top: 14%; width: clamp(5rem, 14vw, 11rem); color: var(--accent-2); }
 .markC { left: 50%; top: 56%; translate: -50% 0; width: clamp(13rem, 38vw, 30rem); }
 
-.cta { grid-row: 3; z-index: 3; justify-self: center; margin-top: var(--s-2); }
+/*
+ * A child of .copy, not a sibling of it.
+ *
+ * As a sibling pinned to the same grid row it could not share the copy's cell,
+ * so auto-placement opened a second implicit column for it and centred
+ * CELEBRATE in the first one — the whole act sat left of the screen. Inside
+ * .copy the verb, the line and the button centre together as one block.
+ */
+.cta { z-index: 3; justify-self: center; margin-top: var(--s-2); }
+
+/*
+ * A quieter button than the page's standard pill.
+ *
+ * btn--lg is a big filled lozenge built to be the loudest thing on a cream
+ * section. Dropped onto footage under a 10rem word it was competing with the
+ * verb and reading like a banner ad. An outline in the same ink as the type
+ * belongs to the picture instead of sitting on top of it.
+ */
+.pick {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75em 1.6em;
+  font-family: var(--font-text);
+  font-size: var(--t-xs);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--cream);
+  border: 1px solid color-mix(in oklab, var(--cream) 55%, transparent);
+  border-radius: var(--radius-soft);
+  backdrop-filter: blur(6px);
+  background: rgb(16 12 10 / 0.22);
+  transition:
+    background 320ms var(--e-out),
+    border-color 320ms var(--e-out),
+    gap 320ms var(--e-out);
+}
+.pick:hover,
+.pick:focus-visible {
+  background: rgb(16 12 10 / 0.4);
+  border-color: var(--cream);
+  gap: 0.95rem;
+}
+.pick:focus-visible { outline: 2px solid var(--cream); outline-offset: 3px; }
+.pickArrow { width: 1em; height: auto; }
 
 /* ---------------------------------------------------------------- narrow --- */
 @media (max-width: 760px) {
   .act { height: 200svh; }
-  .verb { font-size: clamp(3.2rem, 22vw, 7rem); }
+  .verb { --verb-size: clamp(3.2rem, 22vw, 7rem); }
   .line { font-size: var(--t-m); max-width: 20ch; }
   .passRow { gap: 1rem; }
   .passed { height: clamp(7rem, 26vh, 12rem); }
-  .cta { margin-bottom: var(--s-5); }
 }
 
 /*

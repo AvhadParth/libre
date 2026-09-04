@@ -1,0 +1,59 @@
+/*
+ * Footage, blurred, with the verb sharp on top of it.
+ *
+ * The blur and the scale are CSS custom properties so the scroll can animate
+ * them — GSAP cannot tween inside a `filter` string, but it can tween a custom
+ * property that the filter reads.
+ */
+.film {
+  --film-blur: 10px;
+  --film-scale: 1.08;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.poster,
+.video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Scaled up because blurring pulls transparent edges in from the frame. */
+  transform: scale(var(--film-scale));
+  filter: blur(var(--film-blur)) saturate(1.05);
+  will-change: transform, filter;
+}
+
+/* The film fades over the poster once it can genuinely play. */
+.video { opacity: 0; transition: opacity 700ms var(--e-out); }
+.film[data-ready] .video { opacity: 1; }
+
+/*
+ * NEUTRAL, never the brand colour.
+ *
+ * This used to tint each film with that act's ground — Sol over the bubbles,
+ * Mist over the pink, Azul over the café — and it read as a coloured sheet laid
+ * over the footage rather than as footage. A hueless dark does the only job a
+ * scrim has, which is keeping the type readable, and leaves the film looking
+ * like film.
+ */
+.scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      120% 90% at 50% 50%,
+      rgb(16 12 10 / 0.34) 0%,
+      rgb(16 12 10 / 0.42) 58%,
+      rgb(16 12 10 / 0.56) 100%
+    );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .poster, .video { transform: scale(1.03); filter: blur(6px) saturate(1.05); }
+  .video { transition: none; }
+}

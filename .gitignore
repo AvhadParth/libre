@@ -20,3 +20,6 @@ next-env.d.ts
 # raw 3D masters. The derived assets the site actually serves — logo, labels,
 # optimised bottle models — are committed under public/.
 brand-source/
+
+# Master footage — the compressed derivatives in public/videos are what ships.
+video-source/

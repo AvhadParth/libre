@@ -76,6 +76,20 @@ export function Nav() {
        * moved on, which is most obvious mid-blend. Reading the computed colour
        * means the bar merges through every section, blended or not.
        */
+      /*
+       * Some sections are film, and the bar must not lay a slab of their theme
+       * colour over the footage. They opt out with data-nav="clear": the bar
+       * keeps white ink, drops its scrim, and lets the picture run under it.
+       */
+      const clear = !!beneath?.closest?.('[data-nav="clear"]');
+      nav.dataset.clear = clear ? 'true' : 'false';
+      if (clear) {
+        nav.style.setProperty('--fg', INK_LIGHT);
+        nav.style.removeProperty('--bg');
+        setScrolled(window.scrollY > 40);
+        return;
+      }
+
       const bg = opaqueBackgroundOf(beneath ?? null);
       if (bg) {
         nav.style.setProperty('--bg', bg);

@@ -1,12 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type CSSProperties } from 'react';
 import { gsap } from '@/lib/gsap';
 import { prefersReducedMotion } from '@/lib/motion';
 import type { ThemeName } from '@/lib/products';
 import { ACTS, type ActKind } from '@/lib/world-acts';
 import { Arrow, Bubbles, ConfettiMark, Glass, Scribble } from './brand/Marks';
+import { ActFilm } from './ActFilm';
 import styles from './WorldActs.module.css';
 
 /**
@@ -40,12 +41,14 @@ function Act({
   line,
   theme,
   index,
+  video,
 }: {
   kind: ActKind;
   verb: string;
   line: string;
   theme: ThemeName;
   index: number;
+  video?: string;
 }) {
   const root = useRef<HTMLElement>(null);
 
@@ -129,18 +132,48 @@ function Act({
   }, [kind]);
 
   return (
-    <section ref={root} className={styles.act} data-theme={theme} data-kind={kind}>
+    <section
+      ref={root}
+      className={styles.act}
+      data-theme={theme}
+      data-kind={kind}
+      data-film={video ? '' : undefined}
+      /* Every act, not only the film ones — the bar should read the same the
+         whole way down the page rather than reappearing over Share. */
+      data-nav="clear"
+    >
       <div className={styles.stage}>
+        {video && <ActFilm src={video} alt={`${verb} — LIBRE`} />}
+
         <p className={styles.index}>{String(index + 1).padStart(2, '0')}</p>
 
-        <h2 className={`display ${styles.verb}`} data-verb>
-          {verb}
-        </h2>
-        <p className={styles.line} data-line>
-          {line}
-        </p>
+        <div className={styles.copy}>
+          <h2
+            className={`display ${styles.verb}`}
+            data-verb
+            /* So the type can cap itself at what the frame holds. */
+            style={{ '--verb-len': verb.length } as CSSProperties}
+          >
+            {verb}
+          </h2>
+          <p className={styles.line} data-line>
+            {line}
+          </p>
 
-        <div className={styles.art} aria-hidden="true">
+          {/* Inside the copy block, so the three centre as one group. As a
+              sibling it forced a second grid column and pushed CELEBRATE
+              left of the screen. */}
+          {kind === 'celebrate' && (
+            <div className={styles.cta} data-cta>
+              <Link href="/wine#shop" className={styles.pick} data-cursor="LET'S POUR">
+                Pick a bottle <Arrow className={styles.pickArrow} />
+              </Link>
+            </div>
+          )}
+        </div>
+
+        {/* Only where there is no film. Confetti over footage is noise. */}
+        <div className={styles.art} data-has-film={video ? '' : undefined} aria-hidden="true">
           {kind === 'pop' &&
             Array.from({ length: 8 }, (_, i) => (
               <ConfettiMark key={i} className={styles.piece} data-piece />
@@ -185,13 +218,6 @@ function Act({
           )}
         </div>
 
-        {kind === 'celebrate' && (
-          <div className={styles.cta} data-cta>
-            <Link href="/wine#shop" className="btn btn--lg btn--accent" data-cursor="LET'S POUR">
-              Pick a bottle <Arrow className="btn__arrow" />
-            </Link>
-          </div>
-        )}
       </div>
     </section>
   );

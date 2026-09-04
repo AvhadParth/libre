@@ -31,7 +31,17 @@
   justify-items: start;
 }
 
-.heroTitle { margin: 0; max-width: 13ch; }
+/*
+ * Down from display--hero, which is clamp(4.5rem, 19vw, 24rem) — 279px on a
+ * laptop and capped at 384px. On a page whose whole job is the five acts
+ * behind it, an opener that size was the loudest thing on the site.
+ */
+.heroTitle {
+  margin: 0;
+  max-width: 13ch;
+  font-size: clamp(2.6rem, 7vw, 6rem);
+  line-height: 0.94;
+}
 .heroTitle :global(.marked) > svg { color: var(--accent); }
 .heroLede { max-width: 34ch; }
 

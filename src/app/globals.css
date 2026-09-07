@@ -316,6 +316,17 @@ svg[data-scribble] path { stroke-width: 3px; }
 }
 .link:hover::after, .link:focus-visible::after { transform: scaleX(1); transform-origin: left; }
 
+/*
+ * A thumb-sized hit area on touch screens, with the type where it was.
+ *
+ * These set at 21px tall, which is a fiddly target on a phone. The padding
+ * grows the box and the negative margin gives the space straight back to the
+ * layout, so nothing moves — only what counts as a tap.
+ */
+@media (max-width: 900px) {
+  .link { padding-block: 0.55rem; margin-block: -0.55rem; }
+}
+
 /* --------------------------------------------------------------------------
    10. ACCESSIBILITY
    The experiment never costs anyone the content.

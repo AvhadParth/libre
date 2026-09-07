@@ -257,13 +257,13 @@ export function HeroLineup() {
         const at = trackAtIndex(i, last);
         const card = q(`[data-card="${i}"]`);
         if (i === 0) {
-          gsap.set(card, { opacity: 1, yPercent: 0 });
+          gsap.set(card, { autoAlpha: 1, yPercent: 0 });
         } else {
-          tl.fromTo(card, { opacity: 0, yPercent: 28 },
-            { opacity: 1, yPercent: 0, duration: 0.09 }, Math.max(0, at - 0.09));
+          tl.fromTo(card, { autoAlpha: 0, yPercent: 28 },
+            { autoAlpha: 1, yPercent: 0, duration: 0.09 }, Math.max(0, at - 0.09));
         }
         if (i < last) {
-          tl.to(card, { opacity: 0, yPercent: -22, duration: 0.09 },
+          tl.to(card, { autoAlpha: 0, yPercent: -22, duration: 0.09 },
             Math.min(0.98, at + 0.06));
         }
       });

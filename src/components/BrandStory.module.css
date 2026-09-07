@@ -141,4 +141,26 @@
   /* Three overlapping photographs is a scrum on a phone; the third stands down. */
   .photoC { display: none; }
   .closing { width: min(44ch, 86vw); bottom: clamp(2rem, 7vh, 4rem); }
+  /*
+   * The closing line carries its own pool of ground on a phone.
+   *
+   * At 360px there is no corner left to push the collage into, so the frame in
+   * the bottom right reaches straight across the paragraph — half of every
+   * line was sitting on a photograph, and a text-shadow alone was not holding
+   * it. This is the same radial falloff the headline gets, scoped to the
+   * paragraph, so it reads as the ground showing through rather than a plate
+   * laid over the picture.
+   */
+  .closing::before {
+    content: '';
+    position: absolute;
+    inset: -1.6rem -1.4rem;
+    z-index: -1;
+    background: radial-gradient(
+      68% 60% at 50% 50%,
+      color-mix(in oklab, var(--rouge) 90%, transparent) 0%,
+      color-mix(in oklab, var(--rouge) 64%, transparent) 56%,
+      transparent 100%
+    );
+  }
 }

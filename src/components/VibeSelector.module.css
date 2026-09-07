@@ -248,7 +248,22 @@
   /* Two up rather than one — five full-width cards is a long scroll. */
   .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .body { padding: 0.85rem 0.8rem 0.9rem; }
-  .add { letter-spacing: 0.04em; padding-inline: 0.5rem; }
+
+  /*
+   * The buy row stacks.
+   *
+   * Side by side it needs the stepper's fixed width plus a nowrap "Add to
+   * cart" and its arrow. A card is 166px on a 390px screen, so the button ran
+   * out of the card and off the right of the page. On its own row it has the
+   * full card width and the stepper can take a proper touch size.
+   */
+  .buy { grid-template-columns: minmax(0, 1fr); gap: 0.5rem; }
+  .qty {
+    justify-self: start;
+    grid-template-columns: 2.6rem 2rem 2.6rem;
+    height: 2.75rem;
+  }
+  .add { letter-spacing: 0.04em; padding-inline: 0.5rem; height: 2.75rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

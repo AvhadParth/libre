@@ -77,12 +77,25 @@
   grid-template-areas: 'card';
 }
 
+/*
+ * All four share one cell, so the ones that are not showing must be hidden,
+ * not merely transparent.
+ *
+ * At opacity 0 a card still hit-tests, still takes tab focus and is still read
+ * out. Merlot is last in the DOM, so it painted on top of the whole stack and
+ * swallowed every click on whichever card was actually visible — pressing
+ * "Meet it" on Sparkling White hit dead air, and at the one point the two
+ * buttons overlapped it opened Merlot. `visibility` takes them out of
+ * hit-testing, the tab order and the accessibility tree at once; the tweens
+ * drive it through GSAP's autoAlpha.
+ */
 .card {
   grid-area: card;
   display: grid;
   gap: 0.55rem;
   justify-items: start;
   opacity: 0;
+  visibility: hidden;
   will-change: transform, opacity;
 }
 

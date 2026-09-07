@@ -39,10 +39,14 @@
 /* Over film the bar carries no plate at all — just white marks on the picture. */
 .nav[data-clear='true']::before { opacity: 0; }
 
-.nav[data-scrolled='true'] .brand { transform: scale(0.9); }
+/* The MARK shrinks, not the link. Scaling the link scaled its hit area with
+   it, which put the touch box back under 44px the moment you scrolled. */
+.nav[data-scrolled='true'] .brand > * { transform: scale(0.9); }
 
 .brand {
   display: inline-flex;
+}
+.brand > * {
   transform-origin: left center;
   transition: transform 620ms var(--e-out);
 }
@@ -194,5 +198,29 @@
 
 @media (max-width: 900px) {
   .links, .noRules, .cartLabel { display: none; }
-  .burger { display: flex; }
+
+  /*
+   * Proper touch boxes around marks that keep their drawn size.
+   *
+   * With the label hidden, the cart's whole hit area was the 26px count badge
+   * and the burger was exactly as big as its two lines — both under every
+   * platform's 44px minimum, which is what makes a bar feel like it is
+   * ignoring taps. The box grows; the marks do not.
+   */
+  .burger {
+    display: flex;
+    align-items: center;
+    width: 44px;
+    height: 44px;
+  }
+  .burgerBar { width: 34px; }
+
+  .cart {
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* The wordmark is the way home; it was a 22px-tall strip. */
+  .brand { align-items: center; min-height: 44px; }
 }

@@ -22,7 +22,9 @@ import styles from './StickyBuy.module.css';
  */
 export function StickyBuy({ product, watch }: { product: Product; watch: string }) {
   const cart = useCart();
-  const [visible, setVisible] = useState(false);
+  const [past, setPast] = useState(false);
+  const [atEnd, setAtEnd] = useState(false);
+  const visible = past && !atEnd;
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
   const button = useRef<HTMLButtonElement>(null);
@@ -32,12 +34,28 @@ export function StickyBuy({ product, watch }: { product: Product; watch: string 
     const target = document.querySelector(watch);
     if (!target) return;
     const io = new IntersectionObserver(
-      ([entry]) => setVisible(!entry.isIntersecting && entry.boundingClientRect.top < 0),
+      ([entry]) => setPast(!entry.isIntersecting && entry.boundingClientRect.top < 0),
       { rootMargin: '0px' },
     );
     io.observe(target);
     return () => io.disconnect();
   }, [watch]);
+
+  /*
+   * …and back off again at the end of the page.
+   *
+   * A fixed bar that never leaves spends the whole footer sitting on top of
+   * it — on a phone it covered the closing links outright, and the row of
+   * other bottles above them could not be tapped. By the time the footer is
+   * on screen the page has made its case and the bar is only in the way.
+   */
+  useEffect(() => {
+    const footer = document.querySelector('footer');
+    if (!footer) return;
+    const io = new IntersectionObserver(([entry]) => setAtEnd(entry.isIntersecting));
+    io.observe(footer);
+    return () => io.disconnect();
+  }, []);
 
   const add = () => {
     cart.add(product.slug, qty);

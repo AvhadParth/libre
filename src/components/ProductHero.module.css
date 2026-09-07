@@ -79,7 +79,15 @@
   letter-spacing: -0.005em;
 }
 
-.secondary { color: var(--fg-soft); display: inline-flex; align-items: center; gap: 0.6em; }
+.secondary {
+  color: var(--fg-soft);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  /* Tall enough to tap; the negative margin keeps the copy's rhythm. */
+  min-height: 2.75rem;
+  margin-block: -0.6rem;
+}
 .secondaryArrow { width: 16px; transition: transform 480ms var(--e-elastic); }
 .secondary:hover .secondaryArrow { transform: translateX(0.35em); }
 

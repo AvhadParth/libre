@@ -34,7 +34,17 @@
   border-bottom: 1px solid var(--rule);
 }
 .title { margin: 0; }
-.close { font-size: 1.1rem; padding: 0.4rem; line-height: 1; }
+/* 44px square: this is how you get out of a panel covering the whole screen,
+   so it is the last control that should be fiddly. */
+.close {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin-right: -0.4rem;
+  font-size: 1.1rem;
+  line-height: 1;
+}
 
 .empty {
   display: grid; justify-items: start; align-content: center; gap: var(--s-2);
@@ -117,3 +127,8 @@
 .subtotal strong { font-family: var(--font-text); font-weight: 400; font-size: var(--t-xl); letter-spacing: -0.005em; }
 .note { font-size: var(--t-xs); color: var(--fg-faint); }
 .keep { justify-self: center; color: var(--fg-soft); }
+
+@media (max-width: 900px) {
+  /* 44px, the platform minimum for a control you tap rather than click. */
+  .qty button { width: 2.75rem; height: 2.75rem; }
+}

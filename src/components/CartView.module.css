@@ -124,4 +124,6 @@
   .summary { position: static; }
   .line { grid-template-columns: 3.6rem minmax(0, 1fr) auto; grid-template-areas: none; }
   .price { grid-column: 2 / -1; justify-self: start; }
+  /* 44px, the platform minimum for a control you tap rather than click. */
+  .qty button { width: 2.75rem; height: 2.75rem; }
 }

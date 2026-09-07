@@ -53,6 +53,18 @@
   display: block;
   height: clamp(13rem, 34vw, 26rem);
   width: auto;
+  /*
+   * The box before the picture.
+   *
+   * These load lazily, and with `width: auto` a bottle that has not decoded
+   * yet is zero wide — the whole shelf collapses to a sliver and snaps open as
+   * the images arrive, right as you are scrolling onto it. A ratio a shade
+   * wider than the widest bottle reserves the space up front; `contain` means
+   * the slack shows as air beside a narrow bottle rather than stretching it.
+   */
+  aspect-ratio: 7 / 25;
+  object-fit: contain;
+  object-position: 50% 100%;
   transform-origin: 50% 100%;
   transform: scale(0.86);
   opacity: 0.5;
@@ -134,9 +146,18 @@
        keeps the y axis visible, so the active bottle can still rise. */
     overflow-x: clip;
     gap: clamp(0.25rem, 1.5vw, 1rem);
-    min-height: clamp(12rem, 46vw, 20rem);
+    min-height: clamp(12rem, 62vw, 21rem);
   }
-  .bottle { height: clamp(9rem, 30vw, 16rem); }
+  /*
+   * Sized so the five together fill the row, not so each one is a fraction of
+   * the height it has on desktop.
+   *
+   * At 30vw the bottles came out 31–40px wide on a 390px screen — toothpicks,
+   * with more than a third of the row left empty, and each one is a link you
+   * are meant to be able to tap. Their combined width is about 1.2x their
+   * height, so ~58vw fills the gutter-to-gutter width with the gaps.
+   */
+  .bottle { height: clamp(9rem, 58vw, 17rem); }
   .slot[data-active] .bottle { transform: translateY(-0.9rem) scale(1.08); }
   .glow { filter: blur(1.6rem); }
   .readout { min-height: 8rem; }

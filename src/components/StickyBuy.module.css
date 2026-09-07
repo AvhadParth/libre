@@ -122,6 +122,8 @@
   .thumb, .meta { display: none; }
   .price { font-size: 1.1rem; }
   .add { padding-inline: 0.85rem; letter-spacing: 0.06em; }
+  /* 44px tall, and wide enough to hit with a thumb. */
+  .qty { grid-template-columns: 2.6rem 2rem 2.6rem; height: 2.75rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

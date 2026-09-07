@@ -25,39 +25,89 @@
   height: 100svh;
   overflow: hidden;
   isolation: isolate;
+
+  /*
+   * The floor everything in the hero stands on, as one fluid value rather than
+   * a number per breakpoint.
+   *
+   * The stacked layout sat at 5% of the viewport height and the side-by-side
+   * one at 11%, so the same design had a seventh of the screen empty under it
+   * on a laptop and a twentieth on a phone. One clamp gives every device the
+   * same proportion, with a floor for landscape phones and a ceiling so it
+   * cannot run away on a 1440-tall display.
+   */
+  --hero-floor: clamp(1.25rem, 5vh, 4rem);
+
+  /*
+   * Two rows: art, then the copy standing on the floor.
+   *
+   * Everything used to be absolutely positioned over everything else, and the
+   * wordmark reserved its clearance as a flat 26svh. That is a guess, and it is
+   * wrong wherever the copy is not 26% of the screen: on a 1280x600 laptop the
+   * copy is 42% of the height and the wordmark was drawn straight through the
+   * product name. Here the copy takes the height it needs and the wordmark is
+   * given exactly what is left, at every size, with nothing to keep in sync.
+   *
+   * The bubble field and the canvas stay out of the grid — they are the
+   * backdrop and they want the whole stage.
+   */
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: var(--s-3);
 }
 
 .bubbles { z-index: 0; }
 
 /* ------------------------------------------------------------- wordmark --- */
 .backType {
-  position: absolute;
-  inset: 0;
+  grid-area: 1 / 1 / 2 / 3;
   z-index: 1;
   display: grid;
-  place-items: center;
-  /* Lifted clear of the copy in the lower-left. */
-  padding-block: calc(var(--nav-h) + 2svh) 26svh;
+  /* Clear of the bar; the clearance below is the copy's own row. */
+  padding-top: calc(var(--nav-h) + 2svh);
+  min-height: 0;
   pointer-events: none;
 }
 
+/* Stretched, so it has a definite height for the artwork to measure against. */
 .wordmark {
   margin: 0;
-  display: block;
-  width: 100%;
+  display: grid;
+  place-items: center;
+  min-height: 0;
   color: var(--fg);
 }
 
-/* The wordmark is artwork, so it is sized by width against the viewport rather
-   than by font-size. Capped so it never outgrows the row standing in it. */
+/*
+ * The wordmark is artwork, so it is sized against the viewport rather than by
+ * font-size — by width where there is height to spare, and by the height of
+ * its own row where there is not.
+ *
+ * Sized on width alone it outgrew short windows and reached down through the
+ * product name. Carrying the traced logo's own ratio means the box can be
+ * bound by either edge and stay in proportion, so it just gets smaller.
+ */
 .wordmarkArt {
   --clear-space: 0;
   display: block;
-  margin-inline: auto;
   width: clamp(17rem, 58vw, 64rem);
+  max-width: 100%;
+  /*
+   * `min-height: 0` is the whole trick.
+   *
+   * A grid item's automatic minimum size is its content, and the content here
+   * is an SVG with an intrinsic ratio — so the box was pinned to the height the
+   * width implied and neither `height` nor `max-height` could pull it back.
+   * Released, it takes the row's height, and the SVG scales itself to fit
+   * inside and centres, so the wordmark is bound by width where there is
+   * height to spare and by height where there is not.
+   */
+  height: 100%;
+  min-height: 0;
   opacity: 0.9;
 }
-.wordmarkArt svg { height: auto; width: 100%; }
+.wordmarkArt svg { width: 100%; height: 100%; }
 
 .canvas {
   position: absolute;
@@ -67,10 +117,12 @@
 
 /* ---------------------------------------------------------------- cards --- */
 .cards {
-  position: absolute;
+  grid-area: 2 / 1;
+  align-self: end;
+  justify-self: start;
+  position: relative;
   z-index: 3;
-  left: var(--gutter);
-  bottom: clamp(3rem, 11vh, 7.5rem);
+  margin: 0 var(--gutter) var(--hero-floor);
   width: min(24rem, 42vw);
   display: grid;
   /* All three occupy the same cell and crossfade in place. */
@@ -115,10 +167,10 @@
 
 /* ------------------------------------------------------------------ cue --- */
 .cue {
-  position: absolute;
+  grid-area: 2 / 2;
+  align-self: end;
   z-index: 3;
-  right: var(--gutter);
-  bottom: clamp(3rem, 11vh, 7.5rem);
+  margin: 0 var(--gutter) var(--hero-floor) 0;
   display: inline-flex;
   align-items: center;
   gap: 0.7em;
@@ -158,23 +210,21 @@
 }
 
 /* --------------------------------------------------------------- narrow --- */
-@media (max-width: 900px) {
+/*
+ * Portrait, not merely narrow.
+ *
+ * On width alone a phone on its side took the stacked layout, which puts the
+ * copy under the bottle and lays a wash behind it — on a 390-tall viewport
+ * that wash covered two thirds of the screen and left the bottle as a neck.
+ * A landscape phone has width to spare and no height, so it wants the same
+ * side-by-side arrangement a laptop gets.
+ */
+@media (max-width: 900px) and (orientation: portrait) {
   .track { height: 580svh; }
   .cards {
-    /*
-     * Down onto the floor of the screen.
-     *
-     * At 14vh the copy finished 118px up from the bottom — a seventh of the
-     * screen left empty under the button, while the eyebrow was still crossing
-     * the bottle's label higher up. One custom property, because the wash
-     * below has to reach the bottom edge and the two cannot be allowed to
-     * drift apart.
-     */
-    --cards-bottom: clamp(1.5rem, 5vh, 3rem);
-    left: var(--gutter);
-    right: var(--gutter);
+    grid-column: 1 / -1;
+    justify-self: stretch;
     width: auto;
-    bottom: var(--cards-bottom);
   }
   /*
    * Stacked, the copy sits directly over the bottle instead of beside it, and
@@ -186,7 +236,7 @@
     content: '';
     position: absolute;
     z-index: -1;
-    inset: -4rem calc(var(--gutter) * -1) calc(var(--cards-bottom) * -1);
+    inset: -4rem calc(var(--gutter) * -1) calc(var(--hero-floor) * -1);
     /*
      * Solid for the whole copy, feathered only in the 4rem above it.
      *
@@ -207,5 +257,8 @@
   }
   .cue { display: none; }
   .wordmarkArt { width: min(84vw, 34rem); }
-  .backType { align-items: start; padding-top: calc(var(--nav-h) + 7svh); }
+  /* Near the top rather than centred; .backType keeps stretching its child so
+     the artwork still has a height to measure against. */
+  .wordmark { align-content: start; }
+  .backType { padding-top: calc(var(--nav-h) + 7svh); }
 }

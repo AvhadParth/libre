@@ -161,10 +161,20 @@
 @media (max-width: 900px) {
   .track { height: 580svh; }
   .cards {
+    /*
+     * Down onto the floor of the screen.
+     *
+     * At 14vh the copy finished 118px up from the bottom — a seventh of the
+     * screen left empty under the button, while the eyebrow was still crossing
+     * the bottle's label higher up. One custom property, because the wash
+     * below has to reach the bottom edge and the two cannot be allowed to
+     * drift apart.
+     */
+    --cards-bottom: clamp(1.5rem, 5vh, 3rem);
     left: var(--gutter);
     right: var(--gutter);
     width: auto;
-    bottom: clamp(4.5rem, 14vh, 8rem);
+    bottom: var(--cards-bottom);
   }
   /*
    * Stacked, the copy sits directly over the bottle instead of beside it, and
@@ -176,12 +186,21 @@
     content: '';
     position: absolute;
     z-index: -1;
-    inset: -2.5rem calc(var(--gutter) * -1) calc(clamp(4.5rem, 14vh, 8rem) * -1);
+    inset: -4rem calc(var(--gutter) * -1) calc(var(--cards-bottom) * -1);
+    /*
+     * Solid for the whole copy, feathered only in the 4rem above it.
+     *
+     * The fade used to be a fraction of the box, which meant it was still
+     * fading where the words were: fine on a phone, where the bottle stops
+     * above them, but the camera is height-constrained past about a 0.76
+     * aspect, so on a tablet the bottle grows down through the eyebrow and the
+     * name. Anchoring the feather to the top edge in rem makes the ground flat
+     * under the copy at every width.
+     */
     background: linear-gradient(
       to top,
       var(--bg) 0%,
-      var(--bg) 46%,
-      color-mix(in oklab, var(--bg) 72%, transparent) 74%,
+      var(--bg) calc(100% - 4rem),
       transparent 100%
     );
     pointer-events: none;

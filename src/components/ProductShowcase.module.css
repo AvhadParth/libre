@@ -82,7 +82,19 @@
   filter: saturate(1);
 }
 
-/* A soft pool of the product's own colour, behind the bottle it belongs to. */
+/*
+ * A soft pool of the product's own colour, behind the bottle it belongs to.
+ *
+ * Painted as a gradient, NOT as a solid disc under filter: blur().
+ *
+ * A filter is rasterised into a region the browser sizes for itself, and on a
+ * 2x display Chrome clipped that region to the element's own box — the whole
+ * point of the blur being that it spills past it. The softened rim was cut
+ * away and the pool came out as a hard-edged rectangle behind the bottle,
+ * visible on any retina screen and invisible on a 1x one, which is why it
+ * survived review. A radial-gradient carries its own falloff, so there is no
+ * filter region to clip: identical at every pixel ratio, and cheaper to paint.
+ */
 .glow {
   position: absolute;
   z-index: 0;
@@ -91,13 +103,18 @@
   width: clamp(11rem, 26vw, 20rem);
   aspect-ratio: 1;
   translate: -50% 0;
-  border-radius: 50%;
-  background: var(--bg);
+  background: radial-gradient(
+    closest-side circle,
+    var(--bg) 0%,
+    color-mix(in oklab, var(--bg) 56%, transparent) 44%,
+    transparent 100%
+  );
   opacity: 0;
-  filter: blur(2.4rem);
   transition: opacity 460ms var(--e-out);
 }
-.slot[data-active] .glow { opacity: 0.42; }
+/* A shade stronger than the blurred disc was, because a gradient carries less
+   colour overall than a flat fill of the same opacity. */
+.slot[data-active] .glow { opacity: 0.5; }
 
 /* ------------------------------------------------------------ the readout --- */
 /*
@@ -159,6 +176,5 @@
    */
   .bottle { height: clamp(9rem, 58vw, 17rem); }
   .slot[data-active] .bottle { transform: translateY(-0.9rem) scale(1.08); }
-  .glow { filter: blur(1.6rem); }
   .readout { min-height: 8rem; }
 }

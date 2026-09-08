@@ -1,15 +1,170 @@
+/*
+ * Documents, not posters.
+ *
+ * Chantal sets the page title and stops there. Every heading, clause and list
+ * below it is Avenir: it is the face built to be read at length, and it is the
+ * one with a complete character set — Chantal has no lowercase q or z and no
+ * accents beyond É, which is a risk worth taking on a headline and not one
+ * worth taking on a sentence somebody may have to rely on.
+ */
 .page { padding: calc(var(--nav-h) + var(--s-5)) var(--gutter) var(--s-6); }
-.inner { display: grid; gap: var(--s-3); justify-items: start; max-width: 68rem; }
-.title { margin: 0; }
 
-.sections { display: grid; gap: var(--s-3); width: 100%; margin-block: var(--s-2); }
-.section { padding-bottom: var(--s-2); border-bottom: 1px solid var(--rule); }
-.sectionTitle {
-  display: flex; align-items: baseline; gap: var(--s-2);
-  font-family: var(--font-display);
-  font-size: var(--d-s);
-  letter-spacing: -0.015em;
-  margin-bottom: 0.5rem;
+.inner {
+  display: grid;
+  gap: var(--s-4);
+  justify-items: start;
+  /* ~72 characters at this size: the width prose is comfortable to read at. */
+  max-width: 46rem;
 }
-.sectionNo { font-family: var(--font-text); font-size: var(--t-xs); letter-spacing: 0.2em; color: var(--fg-faint); }
-.placeholder { font-size: var(--t-s); color: var(--fg-faint); font-style: italic; }
+
+.head { display: grid; gap: var(--s-2); justify-items: start; }
+.title { margin: 0; max-width: 16ch; }
+
+.updated {
+  margin: 0;
+  font-family: var(--font-text);
+  font-size: var(--t-xs);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fg-faint);
+}
+
+/* ------------------------------------------------------------ the document --- */
+.doc {
+  display: grid;
+  gap: var(--s-2);
+  width: 100%;
+  font-family: var(--font-text);
+  font-size: var(--t-m);
+  line-height: 1.65;
+  color: var(--fg-soft);
+}
+
+.heading {
+  display: flex;
+  align-items: baseline;
+  gap: 0.9rem;
+  margin: var(--s-3) 0 0;
+  font-family: var(--font-text);
+  font-size: var(--t-l);
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+  color: var(--fg);
+}
+/* The first heading does not need a gap above it; the note already sits there. */
+.doc > .heading:first-child { margin-top: 0; }
+
+.headingNo {
+  flex: 0 0 auto;
+  font-size: var(--t-xs);
+  letter-spacing: 0.2em;
+  color: var(--fg-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.para { margin: 0; text-wrap: pretty; }
+.para strong { color: var(--fg); font-weight: 600; }
+
+.bullets, .ordered {
+  margin: 0;
+  display: grid;
+  gap: 0.5rem;
+  padding-left: 1.4rem;
+}
+.bullets { list-style: disc; }
+.ordered { list-style: decimal; }
+.bullets li, .ordered li { padding-left: 0.3rem; text-wrap: pretty; }
+.bullets li::marker, .ordered li::marker { color: var(--fg-faint); }
+.bullets strong, .ordered strong { color: var(--fg); font-weight: 600; }
+
+.rule {
+  width: 100%;
+  height: 1px;
+  margin: var(--s-3) 0 0;
+  border: 0;
+  background: var(--rule);
+}
+
+/*
+ * An unfilled gap in the template.
+ *
+ * Set as plain body copy, "[Company Legal Name]" reads as a finished sentence
+ * and ships unnoticed. Marked, it is impossible to miss and impossible to
+ * mistake for approved copy. The brackets are real characters rather than
+ * generated content, so they survive a copy-paste, a screen reader and a
+ * stylesheet that failed to load — which is the one case where it matters most.
+ */
+.blank {
+  /*
+   * The highlight bleeds with a spread shadow rather than padding.
+   *
+   * Padding widens the inline box, so "[X business days]." rendered with a
+   * visible gap before the full stop — the punctuation was being pushed off the
+   * word it belongs to. A shadow paints outside the box without touching the
+   * text metrics, so the mark reads as a highlighter stroke and the sentence
+   * sets exactly as it would without it.
+   */
+  --mark: color-mix(in oklab, var(--sol) 58%, transparent);
+  background: var(--mark);
+  box-shadow: 0 0 0 0.16em var(--mark);
+  color: var(--rouge);
+  border-radius: 2px;
+  font-style: normal;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+/*
+ * The advisory each supplied document carries.
+ *
+ * PendingNote would be the obvious component, but it sets short banners in
+ * uppercase and this runs to two sentences — on a page whose whole job is being
+ * readable, that is the wrong tool. Same visual language, sentence case.
+ */
+.advisory {
+  display: grid;
+  gap: 0.5rem;
+  width: 100%;
+  padding: var(--s-2) var(--s-2) var(--s-2) var(--s-3);
+  border-left: 2px solid color-mix(in oklab, var(--sol) 70%, var(--rule));
+  background: color-mix(in oklab, var(--sol) 12%, transparent);
+  border-radius: 0 6px 6px 0;
+  font-family: var(--font-text);
+  font-size: var(--t-s);
+  line-height: 1.55;
+  color: var(--fg-soft);
+}
+.advisory p { margin: 0; }
+.advisory strong { color: var(--fg); font-weight: 600; }
+
+.placeholder {
+  margin: 0;
+  font-size: var(--t-s);
+  color: var(--fg-faint);
+  font-style: italic;
+}
+
+/* ------------------------------------------------------------------ also --- */
+.also {
+  display: grid;
+  gap: var(--s-2);
+  width: 100%;
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--rule);
+}
+.alsoHead {
+  margin: 0;
+  font-family: var(--font-text);
+  font-size: var(--t-xs);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 400;
+  color: var(--fg-faint);
+}
+.also ul { display: flex; flex-wrap: wrap; gap: var(--s-3); }
+
+@media (max-width: 560px) {
+  .heading { gap: 0.65rem; }
+  .bullets, .ordered { padding-left: 1.1rem; }
+}

@@ -33,6 +33,7 @@ const PLATFORMS = ['Instagram', 'TikTok', 'Spotify'];
 const LEGAL = [
   { href: '/legal/privacy', label: 'Privacy' },
   { href: '/legal/terms', label: 'Terms' },
+  { href: '/legal/contact', label: 'Contact & Grievance' },
   { href: '/legal/accessibility', label: 'Accessibility' },
 ];
 
